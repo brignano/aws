@@ -33,7 +33,7 @@ jobs:
       - name: Deploy to AWS CloudFormation
         uses: aws-actions/aws-cloudformation-github-deploy@v1
         with:
-          name: TerraformAccountSetup
+          name: TerraformAssumeRoleSetup
           template: template.yml
           capabilities: CAPABILITY_NAMED_IAM
           parameter-overrides: TerraformThumbprint=${{ secrets.TERRAFORM_THUMBPRINT  }}
