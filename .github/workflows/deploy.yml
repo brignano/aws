@@ -7,7 +7,7 @@ on:
       - main
     paths:
       - template.yml
-      - deploy.yml
+      - .github/workflows/deploy.yml
 
 env:
   AWS_REGION: us-east-1
