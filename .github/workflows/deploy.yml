@@ -29,6 +29,8 @@ jobs:
           role-session-name: GitHub_to_AWS_via_FederatedOIDC
           aws-region: ${{ env.AWS_REGION }}
           retry-max-attempts: 3
+      - name: Validate Template
+        run: sam validate -t template.yml --lint
       - name: Deploy to AWS CloudFormation
         uses: aws-actions/aws-cloudformation-github-deploy@v1
         with:
