@@ -11,6 +11,7 @@ Resources:
   TerraformCloudAssumeRole:
     Type: "AWS::IAM::Role"
     Properties:
+      RoleName: "TerraformCloudAssumeRole"
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -28,7 +29,7 @@ Resources:
   TerraformCloudAssumeRolePolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
-      ManagedPolicyName: TerraformCloud-AssumeRolePolicy
+      ManagedPolicyName: TerraformCloudAssumeRolePolicy
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
