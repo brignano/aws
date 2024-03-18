@@ -1,4 +1,15 @@
 AWSTemplateFormatVersion: "2010-09-09"
+
+Parameters:
+  TerraformThumbprint:
+    Type: String
+    Required: true
+    Description: "Thumbprint for Terraform identity provider"
+    MinLength: 1
+    MaxLength: 40
+    AllowedPattern: "[a-fA-F0-9]+"
+    ConstraintDescription: "Terraform Thumbprint has a fixed length of 40 characters. 0-9 and A-F (not case sensitive)"
+
 Resources:
   TerraformOIDCProvider:
     Type: "AWS::IAM::OIDCProvider"
@@ -7,7 +18,7 @@ Resources:
       ClientIdList:
         - "aws.workload.identity"
       ThumbprintList:
-        - ""
+        - !Ref TerraformThumbprint
   TerraformCloudAssumeRole:
     Type: "AWS::IAM::Role"
     Properties:
