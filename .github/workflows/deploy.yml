@@ -32,6 +32,6 @@ jobs:
       - name: Deploy to AWS CloudFormation
         uses: aws-actions/aws-cloudformation-github-deploy@v1
         with:
-          name: InitialAwsAccountConfig
+          name: AwsAccountSetup
           template: template.yml
           capabilities: CAPABILITY_NAMED_IAM
