@@ -30,5 +30,5 @@ Resources:
   
   Outputs:
     TerraformCloudAssumeRoleArn:
-      Description: "The ARN of the Terraform Cloud Assume Role"
-      Value: !Ref TerraformCloudAssumeRole
+      Description: ARN of the Terraform Cloud Assume Role
+      Value: !GetAttr [TerraformCloudAssumeRole, Arn]
