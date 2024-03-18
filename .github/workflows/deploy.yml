@@ -2,6 +2,10 @@
 name: Deploy
 
 on:
+  pull_request:
+    paths:
+      - template.yml
+      - .github/workflows/deploy.yml
   push:
     branches:
       - main
@@ -36,4 +40,6 @@ jobs:
           name: TerraformAssumeRoleSetup
           template: template.yml
           capabilities: CAPABILITY_NAMED_IAM
+          no-fail-on-empty-changeset: true
+          no-execute-changeset: ${{ github.event_name == 'pull_request' }}
           parameter-overrides: TerraformThumbprint=${{ secrets.TERRAFORM_THUMBPRINT  }}
