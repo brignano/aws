@@ -3,7 +3,6 @@ AWSTemplateFormatVersion: "2010-09-09"
 Parameters:
   TerraformThumbprint:
     Type: String
-    Required: true
     Description: "Thumbprint for Terraform identity provider"
     MinLength: 1
     MaxLength: 40
