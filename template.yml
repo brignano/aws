@@ -32,5 +32,3 @@ Resources:
     TerraformCloudAssumeRoleArn:
       Description: "The ARN of the Terraform Cloud Assume Role"
       Value: !GetAtt TerraformCloudAssumeRole.Arn
-      Export:
-        Name: !Sub "${AWS::StackName}-TerraformCloudAssumeRoleArn"
