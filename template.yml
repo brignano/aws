@@ -18,12 +18,19 @@ Resources:
       ManagedPolicyArns:
         - !Ref TerraformAssumeRolePolicy
   TerraformCloudAssumeRolePolicy:
-		Type: AWS::IAM::ManagedPolicy
-		Properties:
-			ManagedPolicyName: TerraformCloud-AssumeRolePolicy
-			PolicyDocument:
-				Version: "2012-10-17"
-				Statement:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: TerraformCloud-AssumeRolePolicy
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
           - Effect: "Allow"
             Action:
               - "amplify:*"
+  
+  Outputs:
+    TerraformCloudAssumeRoleArn:
+      Description: "The ARN of the Terraform Cloud Assume Role"
+      Value: !GetAtt TerraformCloudAssumeRole.Arn
+      Export:
+        Name: !Sub "${AWS::StackName}-TerraformCloudAssumeRoleArn"
