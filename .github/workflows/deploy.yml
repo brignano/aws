@@ -34,3 +34,4 @@ jobs:
         with:
           name: InitialAwsAccountConfig
           template: template.yml
+          capabilities: CAPABILITY_NAMED_IAM
