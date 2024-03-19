@@ -52,9 +52,7 @@ Resources:
           - Effect: "Allow"
             Action:
               - "route53:*"
-            Resource:
-              - Z03854061GJ89FG9XI2HY # brignano.io
-              - Z03941761P902ZZ5Z2ZNA # anthonybrignano.com
+            Resource: "*"
 
 Outputs:
   TerraformCloudAssumeRoleArn:
