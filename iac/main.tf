@@ -60,7 +60,11 @@ resource "aws_route53_record" "anthonybrignano_com" {
   zone_id = aws_route53_zone.anthonybrignano_com.zone_id
   name    = local.domain_name.backup
   type    = "A"
-  records = [aws_s3_bucket_website_configuration.redirect.website_domain]
+  alias {
+    name                   = aws_s3_bucket_website_configuration.redirect.website_domain
+    zone_id                = aws_s3_bucket.redirect.hosted_zone_id
+    evaluate_target_health = false
+  }
 }
 
 resource "aws_route53_record" "www_anthonybrignano_com" {
@@ -79,7 +83,7 @@ resource "aws_s3_bucket" "redirect" {
 }
 
 resource "aws_s3_bucket_website_configuration" "redirect" {
-  bucket = aws_s3_bucket.redirect.bucket
+  bucket = aws_s3_bucket.redirect.bucket.id
   redirect_all_requests_to {
     host_name = local.domain_name.default
     protocol  = "https"
