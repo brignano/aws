@@ -1,13 +1,6 @@
 AWSTemplateFormatVersion: "2010-09-09"
 
 Parameters:
-  Tags:
-    - Key: "Owner"
-      Value: "Anthony Brignano"
-    - Key: "Application"
-      Value: "aws-config"
-    - Key: "Repository"
-      Value: "https://github.com/brignano/aws"
   TerraformThumbprint:
     Type: String
     Description: "Thumbprint for Terraform identity provider"
@@ -25,7 +18,6 @@ Resources:
         - "aws.workload.identity"
       ThumbprintList:
         - !Ref TerraformThumbprint
-    Tags: !Ref Tags
 
   TerraformCloudAssumeRole:
     Type: "AWS::IAM::Role"
@@ -45,7 +37,7 @@ Resources:
                 "app.terraform.io:sub": "organization:brignano:project:*:workspace:*:run_phase:*"
       ManagedPolicyArns:
         - !Ref TerraformCloudAssumeRolePolicy
-    Tags: !Ref Tags
+      
 
   TerraformCloudAssumeRolePolicy:
     Type: AWS::IAM::ManagedPolicy
@@ -67,8 +59,7 @@ Resources:
           - Effect: "Allow"
             Action:
               - "s3:*"
-            Resource: "arn:aws:s3:::anthonybrignano.com"
-    Tags: !Ref Tags
+            Resource: "*"
 
 Outputs:
   TerraformCloudAssumeRoleArn:
