@@ -3,5 +3,6 @@
   "features": {
     "ghcr.io/customink/codespaces-features/sam-cli:1": {},
     "ghcr.io/devcontainers/features/terraform:1": {},
+    "ghcr.io/devcontainers/features/aws-cli:1": {}
   }
 }
