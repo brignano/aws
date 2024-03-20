@@ -4,13 +4,13 @@ on:
   pull_request:
     paths:
       - cloudformation/template.yml
-      - .github/workflows/deploy.yml
+      - .github/workflows/config-aws.yml
   push:
     branches:
       - main
     paths:
       - cloudformation/template.yml
-      - .github/workflows/deploy.yml
+      - .github/workflows/config-aws.yml
 
 env:
   AWS_REGION: us-east-1
