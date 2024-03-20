@@ -61,7 +61,7 @@ resource "aws_route53_record" "anthonybrignano_com" {
   name    = local.domain_name.backup
   type    = "CNAME"
   ttl     = 300
-  records = [aws_s3_bucket.static_hosting_redirect.website_endpoint]
+  records = [aws_s3_bucket_website_configuration.redirect.website_domain]
 }
 
 resource "aws_route53_record" "www_anthonybrignano_com" {
@@ -75,12 +75,12 @@ resource "aws_route53_record" "www_anthonybrignano_com" {
   }
 }
 
-resource "aws_s3_bucket" "static_hosting_redirect" {
+resource "aws_s3_bucket" "redirect" {
   bucket = local.domain_name.backup
 }
 
-resource "aws_s3_bucket_website_configuration" "static_hosting_redirect" {
-  bucket = aws_s3_bucket.static_hosting_redirect.bucket
+resource "aws_s3_bucket_website_configuration" "redirect" {
+  bucket = aws_s3_bucket.redirect.bucket
   redirect_all_requests_to {
     host_name = local.domain_name.default
     protocol  = "https"
