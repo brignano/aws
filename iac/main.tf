@@ -9,14 +9,6 @@ resource "aws_route53_zone" "brignano_io" {
   }
 }
 
-resource "aws_route53_record" "brignano_io" {
-  zone_id = aws_route53_zone.brignano_io.zone_id
-  name    = local.domain_name.default
-  type    = "A"
-  ttl     = 300
-  records = [local.vercel_ip_address]
-}
-
 resource "aws_route53_record" "www_brignano_io" {
   zone_id = aws_route53_zone.brignano_io.zone_id
   name    = "www.${local.domain_name.default}"
@@ -29,6 +21,16 @@ resource "aws_route53_record" "www_brignano_io" {
   }
 }
 
+# todo: remove below resource
+resource "aws_route53_record" "brignano_io" {
+  zone_id = aws_route53_zone.brignano_io.zone_id
+  name    = local.domain_name.default
+  type    = "A"
+  ttl     = 300
+  records = [local.vercel_ip_address]
+}
+
+# todo: remove below resource
 resource "aws_route53_record" "brignano_io_mx" {
   zone_id = aws_route53_zone.brignano_io.zone_id
   name    = local.domain_name.default
@@ -37,6 +39,7 @@ resource "aws_route53_record" "brignano_io_mx" {
   records = ["10 inbound-smtp.us-east-1.amazonaws.com"]
 }
 
+# todo: remove below resource
 resource "aws_route53_record" "brignano_io_txt_ses" {
   zone_id = aws_route53_zone.brignano_io.zone_id
   name    = "_amazonses.${local.domain_name.default}"
