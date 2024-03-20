@@ -33,7 +33,7 @@ jobs:
           role-session-name: GitHub_to_AWS_via_FederatedOIDC
           aws-region: ${{ env.AWS_REGION }}
       - name: Validate Template
-        run: sam validate -t template.yml --lint
+        run: sam validate -t cloudformation/template.yml --lint
       - name: Deploy to AWS CloudFormation
         uses: aws-actions/aws-cloudformation-github-deploy@v1
         with:
