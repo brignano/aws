@@ -1,4 +1,3 @@
-# create a workflow to run on push to main branch when template.yml changes
 name: Configure AWS Account
 
 on:
