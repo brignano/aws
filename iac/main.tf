@@ -83,7 +83,7 @@ resource "aws_s3_bucket" "redirect" {
 }
 
 resource "aws_s3_bucket_website_configuration" "redirect" {
-  bucket = aws_s3_bucket.redirect.bucket.id
+  bucket = aws_s3_bucket.redirect.bucket
   redirect_all_requests_to {
     host_name = local.domain_name.default
     protocol  = "https"
