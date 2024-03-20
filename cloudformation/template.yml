@@ -54,9 +54,7 @@ Resources:
             Action:
               - "route53:*"
             Resource: 
-              - "arn:aws:route53:::hostedzone/Z03854061GJ89FG9XI2HY"  # brignano.io
-              - "arn:aws:route53:::hostedzone/Z03941761P902ZZ5Z2ZNA"  # anthonybrignano.com
-              - "arn:aws:route53:::change/*"
+              - "*"
           - Effect: "Allow"
             Action:
               - "s3:*"
