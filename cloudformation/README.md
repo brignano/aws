@@ -20,4 +20,6 @@
 
 4. Trigger [`deploy.yml`](.github/workflows/deploy.yml)
 
-5. Update [Variables | brignano-io | brignano | Terraform Cloud](https://app.terraform.io/app/brignano/workspaces/brignano-io/variables) with the `TerraformCloudAssumeRoleArn` from [CloudFormation - Stack TerraformAssumeRoleSetup](https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/outputs?filteringText=&filteringStatus=active&viewNested=true&stackId=arn%3Aaws%3Acloudformation%3Aus-east-1%3A549188633263%3Astack%2FTerraformAssumeRoleSetup%2F4fe5e940-e561-11ee-8531-1210038c0be9)
+5. Update [Variables | brignano-io | brignano | Terraform Cloud](https://app.terraform.io/app/brignano/workspaces/brignano-io/variables)
+-  `TFC_AWS_PROVIDER_AUTH`: true
+- `TFC_AWS_RUN_ROLE_ARN`: _<value of `TerraformCloudAssumeRoleArn` in [CloudFormation - Stack TerraformAssumeRoleSetup](https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/outputs?filteringText=&filteringStatus=active&viewNested=true&stackId=arn%3Aaws%3Acloudformation%3Aus-east-1%3A549188633263%3Astack%2FTerraformAssumeRoleSetup%2F4fe5e940-e561-11ee-8531-1210038c0be9)>_
