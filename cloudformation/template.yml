@@ -49,7 +49,7 @@ Resources:
           - Effect: "Allow"
             Action:
               - "amplify:*"
-            Resource: "arn:aws:amplify:549188633263:apps/*"
+            Resource: !Sub "arn:aws:amplify:${AWS::Region}:${AWS::AccountId}:apps/*"
           - Effect: "Allow"
             Action:
               - "route53:*"
