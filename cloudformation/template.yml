@@ -34,7 +34,7 @@ Resources:
               StringEquals:
                 "app.terraform.io:aud": "aws.workload.identity"
               StringLike:
-                "app.terraform.io:sub": "organization:brignano:project:*:workspace:brignano-io:run_phase:*"
+                "app.terraform.io:sub": "organization:brignano:project:*:workspace:*:run_phase:*"
       ManagedPolicyArns:
         - !Ref TerraformCloudAssumeRolePolicy
 
