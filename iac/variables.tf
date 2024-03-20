@@ -1,5 +1,3 @@
-
-
 # todo: remove
 variable "aws_ses_record_value" {
   type        = string
