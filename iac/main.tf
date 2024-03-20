@@ -59,7 +59,7 @@ resource "aws_route53_zone" "anthonybrignano_com" {
 resource "aws_route53_record" "anthonybrignano_com" {
   zone_id = aws_route53_zone.anthonybrignano_com.zone_id
   name    = local.domain_name.backup
-  type    = "CNAME"
+  type    = "A"
   ttl     = 300
   records = [aws_s3_bucket_website_configuration.redirect.website_domain]
 }
