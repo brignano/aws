@@ -72,6 +72,7 @@ Resources:
               - "iam:GetRole"
               - "iam:ListRolePolicies"
               - "iam:GetPolicy"
+              - "iam:ListAttachedRolePolicies"
             Resource:
               - "arn:aws:iam::549188633263:user/*"
               - "arn:aws:iam::549188633263:role/*"
