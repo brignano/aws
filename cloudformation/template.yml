@@ -37,7 +37,6 @@ Resources:
                 "app.terraform.io:sub": "organization:brignano:project:*:workspace:*:run_phase:*"
       ManagedPolicyArns:
         - !Ref TerraformCloudAssumeRolePolicy
-      
 
   TerraformCloudAssumeRolePolicy:
     Type: AWS::IAM::ManagedPolicy
@@ -53,21 +52,25 @@ Resources:
           - Effect: "Allow"
             Action:
               - "route53:*"
-            Resource: 
-              - "arn:aws:route53:::hostedzone/Z03854061GJ89FG9XI2HY"  # brignano.io
-              - "arn:aws:route53:::hostedzone/Z03941761P902ZZ5Z2ZNA"  # anthonybrignano.com
+            Resource:
+              - "arn:aws:route53:::hostedzone/Z03854061GJ89FG9XI2HY" # brignano.io
+              - "arn:aws:route53:::hostedzone/Z03941761P902ZZ5Z2ZNA" # anthonybrignano.com
               - "arn:aws:route53:::change/*"
           - Effect: "Allow"
             Action:
               - "s3:*"
-            Resource: "arn:aws:s3:::anthonybrignano.com"
+            Resource:
+              - "arn:aws:s3:::anthonybrignano.com"
+              - "arn:aws:s3:::brignano.io-email-bucket"
           - Effect: "Allow"
             Action:
               - "ses:DescribeReceiptRuleSet"
+              - "ses:GetIdentityVerificationAttributes"
             Resource: "*"
           - Effect: "Allow"
             Action:
               - "iam:GetRole"
+              - "iam:ListRolePolicies"
             Resource:
               - "arn:aws:iam::549188633263:user/*"
               - "arn:aws:iam::549188633263:role/*"
