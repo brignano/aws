@@ -73,12 +73,8 @@ resource "aws_route53_record" "anthonybrignano_com" {
 resource "aws_route53_record" "www_anthonybrignano_com" {
   zone_id = aws_route53_zone.anthonybrignano_com.zone_id
   name    = "www.${local.domain_name.backup}"
-  type    = "A"
-  alias {
-    name                   = local.domain_name.backup
-    zone_id                = aws_route53_zone.anthonybrignano_com.zone_id
-    evaluate_target_health = false
-  }
+  type    = "CNAME"
+  records = [ local.domain_name.backup ]
 }
 
 resource "aws_s3_bucket" "redirect" {
