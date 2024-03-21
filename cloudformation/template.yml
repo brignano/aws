@@ -64,11 +64,14 @@ Resources:
           - Effect: "Allow"
             Action:
               - "ses:DescribeReceiptRuleSet"
-            Resource: "arn:aws:ses:us-east-1:549188633263:identity/*"
+            Resource: "*"
           - Effect: "Allow"
             Action:
               - "iam:GetRole"
-            Resource: "arn:aws:iam::549188633263:user/*"
+            Resource:
+              - "arn:aws:iam::549188633263:user/*"
+              - "arn:aws:iam::549188633263:role/*"
+              - "arn:aws:iam::549188633263:policy/*"
 
 Outputs:
   TerraformCloudAssumeRoleArn:
