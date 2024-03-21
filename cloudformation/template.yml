@@ -63,12 +63,12 @@ Resources:
             Resource: "arn:aws:s3:::anthonybrignano.com"
           - Effect: "Allow"
             Action:
-              - "ses:*"
-            Resource: "*"
+              - "ses:DescribeReceiptRuleSet"
+            Resource: "arn:aws:ses:us-east-1:549188633263:identity/*"
           - Effect: "Allow"
             Action:
-              - "iam:*"
-            Resource: "*"
+              - "iam:GetRole"
+            Resource: "arn:aws:iam::549188633263:user/*"
 
 Outputs:
   TerraformCloudAssumeRoleArn:
