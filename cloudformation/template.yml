@@ -61,6 +61,14 @@ Resources:
             Action:
               - "s3:*"
             Resource: "arn:aws:s3:::anthonybrignano.com"
+          - Effect: "Allow"
+            Action:
+              - "ses:*"
+            Resource: "*"
+          - Effect: "Allow"
+            Action:
+              - "iam:*"
+            Resource: "*"
 
 Outputs:
   TerraformCloudAssumeRoleArn:
