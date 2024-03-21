@@ -64,7 +64,7 @@ resource "aws_route53_record" "anthonybrignano_com" {
   name    = local.domain_name.backup
   type    = "A"
   alias {
-    name                   = aws_s3_bucket_website_configuration.redirect.website_endpoint
+    name                   = aws_s3_bucket_website_configuration.redirect.website_domain
     zone_id                = aws_s3_bucket.redirect.hosted_zone_id
     evaluate_target_health = false
   }
