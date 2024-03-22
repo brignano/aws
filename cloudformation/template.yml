@@ -64,19 +64,22 @@ Resources:
               - "arn:aws:s3:::brignano.io-email-bucket"
           - Effect: "Allow"
             Action:
-              - "ses:DescribeReceiptRuleSet"
-              - "ses:GetIdentityVerificationAttributes"
+              - "ses:Describe*"
+              - "ses:Get*"
             Resource: "*"
           - Effect: "Allow"
             Action:
-              - "iam:GetRole"
-              - "iam:ListRolePolicies"
-              - "iam:GetPolicy"
-              - "iam:ListAttachedRolePolicies"
+              - "iam:List*"
+              - "iam:Get*"
             Resource:
               - "arn:aws:iam::549188633263:user/*"
               - "arn:aws:iam::549188633263:role/*"
               - "arn:aws:iam::549188633263:policy/*"
+          - Effect: "Allow"
+            Action:
+              - "lambda:Get*"
+            Resource:
+              - "arn:aws:lambda:us-east-1:549188633263:function:*"
 
 Outputs:
   TerraformCloudAssumeRoleArn:
