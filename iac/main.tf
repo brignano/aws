@@ -252,7 +252,7 @@ resource "aws_ses_receipt_rule" "noreply" {
   rule_set_name = aws_ses_receipt_rule_set.primary.rule_set_name
   recipients    = ["noreply@${aws_route53_zone.default.name}"]
   enabled       = true
-  scan_enabled  = false
+  scan_enabled  = true
 
   bounce_action {
     position        = 1
