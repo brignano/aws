@@ -73,6 +73,7 @@ Resources:
             Action:
               - "iam:List*"
               - "iam:Get*"
+              - "iam:Tag*"
             Resource:
               - "arn:aws:iam::549188633263:user/*"
               - "arn:aws:iam::549188633263:role/*"
