@@ -67,6 +67,7 @@ Resources:
               - "ses:Describe*"
               - "ses:Get*"
               - "ses:Set*"
+              - "ses:Create*"
             Resource: "*"
           - Effect: "Allow"
             Action:
