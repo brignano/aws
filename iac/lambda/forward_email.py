@@ -33,21 +33,21 @@ def get_message_from_s3(message_id):
     else:
         object_path = message_id
 
-        object_http_path = (f"http://s3.console.aws.amazon.com/s3/object/{incoming_email_bucket}/{object_path}?region={region}")
+    object_http_path = (f"http://s3.console.aws.amazon.com/s3/object/{incoming_email_bucket}/{object_path}?region={region}")
 
-        # Create a new S3 client.
-        client_s3 = boto3.client("s3")
+    # Create a new S3 client.
+    client_s3 = boto3.client("s3")
 
-        # Get the email object from the S3 bucket.
-        object_s3 = client_s3.get_object(Bucket = incoming_email_bucket,
-            Key = object_path)
-        # Read the content of the message.
-        file = object_s3['Body'].read()
+    # Get the email object from the S3 bucket.
+    object_s3 = client_s3.get_object(Bucket = incoming_email_bucket,
+        Key = object_path)
+    # Read the content of the message.
+    file = object_s3['Body'].read()
 
-        file_dict = {
-            "file": file,
-            "path": object_http_path
-        }
+    file_dict = {
+        "file": file,
+        "path": object_http_path
+    }
 
     return file_dict
 
