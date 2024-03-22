@@ -33,7 +33,7 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
       - name: Validate Template
         run: sam validate -t cloudformation/template.yml --lint
-      - name: CloudFormation Deploy
+      - name: Deploy CloudFormation
         uses: aws-actions/aws-cloudformation-github-deploy@v1
         with:
           name: TerraformAssumeRoleSetup
