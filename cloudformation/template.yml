@@ -68,7 +68,8 @@ Resources:
               - "ses:Get*"
               - "ses:Set*"
               - "ses:Create*"
-              - "ses:DescribeReceiptRule*"
+              - "ses:Describe*"
+              - "ses:Update*"
             Resource: "*"
           - Effect: "Allow"
             Action:
@@ -77,6 +78,7 @@ Resources:
               - "iam:Create*"
               - "iam:Tag*"
               - "iam:Update*"
+              - "iam:Attach*"
             Resource:
               - "arn:aws:iam::549188633263:user/*"
               - "arn:aws:iam::549188633263:role/*"
