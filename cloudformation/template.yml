@@ -78,6 +78,7 @@ Resources:
           - Effect: "Allow"
             Action:
               - "lambda:Get*"
+              - "lambda:List*"
             Resource:
               - "arn:aws:lambda:us-east-1:549188633263:function:*"
 
