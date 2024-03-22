@@ -20,4 +20,3 @@ jobs:
         run: terraform apply -auto-approve
         env:
           TF_VAR_amplify_access_token: ${{ secrets.AMPLIFY_ACCESS_TOKEN }}
-          TF_VAR_aws_ses_record_value: ${{ secrets.AWS_SES_RECORD_VALUE }}
