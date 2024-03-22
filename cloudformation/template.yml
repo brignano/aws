@@ -58,6 +58,11 @@ Resources:
               - "arn:aws:route53:::change/*"
           - Effect: "Allow"
             Action:
+              - "route53:ListHostedZones"
+            Resource:
+              - "*"
+          - Effect: "Allow"
+            Action:
               - "s3:*"
             Resource:
               - "arn:aws:s3:::anthonybrignano.com"
