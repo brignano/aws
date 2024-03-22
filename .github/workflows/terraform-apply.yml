@@ -1,12 +1,7 @@
 name: Terraform Apply
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - "iac/**"
-      - ".github/workflows/terraform-apply.yml"
+  workflow_dispatch:
 
 jobs:
   apply:
@@ -22,7 +17,7 @@ jobs:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
       - run: terraform init
       - name: Run terraform apply
-        run: terraform apply # -auto-approve
+        run: terraform apply -auto-approve
         env:
           TF_VAR_amplify_access_token: ${{ secrets.AMPLIFY_ACCESS_TOKEN }}
           TF_VAR_aws_ses_record_value: ${{ secrets.AWS_SES_RECORD_VALUE }}

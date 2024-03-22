@@ -5,6 +5,10 @@ on:
     paths:
       - "iac/**"
       - ".github/workflows/terraform-plan.yml"
+  push:
+    paths:
+      - "iac/**"
+      - ".github/workflows/terraform-plan.yml"
 
 permissions:
   pull-requests: write
