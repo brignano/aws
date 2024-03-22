@@ -4,6 +4,7 @@ locals {
     default = "brignano.io"
     backup  = "anthonybrignano.com"
   }
+  email_address     = "anthonybrignano@gmail.com"
   # todo: remove
   vercel_ip_address = "76.76.21.21"
 }
