@@ -68,6 +68,7 @@ Resources:
               - "ses:Get*"
               - "ses:Set*"
               - "ses:Create*"
+              - "ses:DescribeReceiptRule*"
             Resource: "*"
           - Effect: "Allow"
             Action:
