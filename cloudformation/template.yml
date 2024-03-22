@@ -79,6 +79,7 @@ Resources:
               - "iam:Tag*"
               - "iam:Update*"
               - "iam:Attach*"
+              - "iam:PassRole"
             Resource:
               - "arn:aws:iam::549188633263:user/*"
               - "arn:aws:iam::549188633263:role/*"
