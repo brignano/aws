@@ -266,7 +266,7 @@ resource "aws_ses_receipt_rule" "noreply" {
 resource "aws_ses_receipt_rule" "archive" {
   name          = "archive"
   rule_set_name = aws_ses_receipt_rule_set.primary.rule_set_name
-  recipients    = [aws_route53_zone.default.name]
+  recipients    = ["hi@${aws_route53_zone.default.name}"]
   enabled       = true
   scan_enabled  = true
 
