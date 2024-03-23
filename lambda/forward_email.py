@@ -10,6 +10,7 @@
 # OF ANY KIND, either express or implied.See the License for the specific
 # language governing permissions and limitations under the License.
 
+import json
 import os
 import boto3
 import email
@@ -131,6 +132,7 @@ def send_email(message):
 def lambda_handler(event, context):
     # Get the unique ID of the message.This corresponds to the name of the file in S3.
     message_id = event['Records'][0]['ses']['mail']['messageId']
+    print(f"Received event {event}")
     print(f"Received message ID {message_id}")
 
     # Retrieve the file from the S3 bucket.
