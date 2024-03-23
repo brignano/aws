@@ -1,5 +1,5 @@
 output "lambda_forward_email_arn" {
-  value = aws_lambda_function.forward_email.arn
+  value = aws_lambda_function.email.arn
 }
 
 output "brignano_io_name" {
