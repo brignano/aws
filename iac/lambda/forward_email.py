@@ -132,8 +132,8 @@ def send_email(message):
 def lambda_handler(event, context):
     # Get the unique ID of the message.This corresponds to the name of the file in S3.
     message_id = event['Records'][0]['ses']['mail']['messageId']
-    print(f"Received SES Records: {event['Records']}")
-    print(f"Received SES Event Sample: {event['Records'][0]}")
+    print(f"Received SES Records: {json.dumps(event['Records'])}")
+    print(f"Received SES Event Sample: {json.dumps(event['Records'][0]})")
     print(f"Received message ID {message_id}")
 
     # Retrieve the file from the S3 bucket.
