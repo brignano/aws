@@ -44,7 +44,8 @@ def get_message_from_s3(message_id):
     # Read the content of the message.
     file = object_s3['Body'].read()
 
-    email = json.loads(file.decode('utf-8'))
+    email = file.decode('utf-8')
+    email = json.loads(email)
     print(f"Email received: {email}")
 
     file_dict = {
