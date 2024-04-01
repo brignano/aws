@@ -109,7 +109,7 @@ def send_email(message):
 
     # Send the email.
     try:
-    #Provide the contents of the email.
+        #Provide the contents of the email.
         response = client_ses.send_raw_email(
             Source = message['Source'],
             Destinations = [
@@ -132,7 +132,6 @@ def send_email(message):
 def lambda_handler(event, context):
     # Get the unique ID of the message.This corresponds to the name of the file in S3.
     message_id = event['Records'][0]['ses']['mail']['messageId']
-    print(f"Received event {event}")
     print(f"Received message ID {message_id}")
 
     # Retrieve the file from the S3 bucket.
