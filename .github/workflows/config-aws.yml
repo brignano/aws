@@ -41,4 +41,4 @@ jobs:
           capabilities: CAPABILITY_NAMED_IAM
           no-fail-on-empty-changeset: "1"
       - name: Add Link to Workflow Summary
-        run: echo "workflow-summary=[CloudFormation Stack Link](https://console.aws.amazon.com/cloudformation/home?region=${{ env.AWS_REGION }}#/stacks/stackinfo?filteringText=${{ steps.deploy.outputs.stack-id }})" >> $GITHUB_SUMMARY
+        run: echo "workflow-summary=[CloudFormation Stack Link](https://console.aws.amazon.com/cloudformation/home?region=${{ env.AWS_REGION }}#/stacks/stackinfo?filteringText=${{ steps.deploy.outputs.stack-id }})" >> $GITHUB_STEP_SUMMARY
