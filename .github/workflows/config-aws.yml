@@ -1,4 +1,4 @@
-name: Configure AWS Account
+name: Terraform Assume Role
 
 on:
   pull_request:
@@ -20,7 +20,7 @@ permissions:
   contents: read
 
 jobs:
-  deploy:
+  setup:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
