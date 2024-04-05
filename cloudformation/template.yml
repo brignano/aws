@@ -1,14 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
 
-Parameters:
-  TerraformThumbprint:
-    Type: String
-    Description: "Thumbprint for Terraform identity provider"
-    MinLength: 1
-    MaxLength: 40
-    AllowedPattern: "[a-fA-F0-9]+"
-    ConstraintDescription: "Terraform Thumbprint has a fixed length of 40 characters. 0-9 and A-F (not case sensitive)"
-
 Resources:
   TerraformOIDCProvider:
     Type: "AWS::IAM::OIDCProvider"
@@ -17,7 +8,7 @@ Resources:
       ClientIdList:
         - "aws.workload.identity"
       ThumbprintList:
-        - !Ref TerraformThumbprint
+        - 9e99a48a9960b14926bb7f3b02e22da2b0ab7280
 
   TerraformCloudAssumeRole:
     Type: "AWS::IAM::Role"
@@ -49,6 +40,11 @@ Resources:
             Action:
               - "amplify:*"
             Resource: !Sub "arn:aws:amplify:${AWS::Region}:${AWS::AccountId}:apps/*"
+            Condition:
+              StringEquals:
+                "aws:PrincipalAccount": !Ref AWS::AccountId
+              StringLike:
+                "aws:PrincipalOrgID": "organization:brignano:project:*:workspace:*:run_phase:*"
           - Effect: "Allow"
             Action:
               - "route53:*"
@@ -56,17 +52,32 @@ Resources:
               - "arn:aws:route53:::hostedzone/Z03854061GJ89FG9XI2HY" # brignano.io
               - "arn:aws:route53:::hostedzone/Z03941761P902ZZ5Z2ZNA" # anthonybrignano.com
               - "arn:aws:route53:::change/*"
+            Condition:
+              StringEquals:
+                "aws:PrincipalAccount": !Ref AWS::AccountId
+              StringLike:
+                "aws:PrincipalOrgID": "organization:brignano:project:*:workspace:*:run_phase:*"
           - Effect: "Allow"
             Action:
               - "route53:ListHostedZones"
             Resource:
               - "*"
+            Condition:
+              StringEquals:
+                "aws:PrincipalAccount": !Ref AWS::AccountId
+              StringLike:
+                "aws:PrincipalOrgID": "organization:brignano:project:*:workspace:*:run_phase:*"
           - Effect: "Allow"
             Action:
               - "s3:*"
             Resource:
               - "arn:aws:s3:::anthonybrignano.com"
               - "arn:aws:s3:::brignano.io-email-bucket"
+            Condition:
+              StringEquals:
+                "aws:PrincipalAccount": !Ref AWS::AccountId
+              StringLike:
+                "aws:PrincipalOrgID": "organization:brignano:project:*:workspace:*:run_phase:*"
           - Effect: "Allow"
             Action:
               - "ses:Describe*"
@@ -76,6 +87,11 @@ Resources:
               - "ses:Describe*"
               - "ses:Update*"
             Resource: "*"
+            Condition:
+              StringEquals:
+                "aws:PrincipalAccount": !Ref AWS::AccountId
+              StringLike:
+                "aws:PrincipalOrgID": "organization:brignano:project:*:workspace:*:run_phase:*"
           - Effect: "Allow"
             Action:
               - "iam:List*"
@@ -86,9 +102,14 @@ Resources:
               - "iam:Attach*"
               - "iam:PassRole"
             Resource:
-              - "arn:aws:iam::549188633263:user/*"
-              - "arn:aws:iam::549188633263:role/*"
-              - "arn:aws:iam::549188633263:policy/*"
+              - !Sub "arn:aws:iam::${AWS::AccountId}:user/*"
+              - !Sub "arn:aws:iam::${AWS::AccountId}:role/*"
+              - !Sub "arn:aws:iam::${AWS::AccountId}:policy/*"
+            Condition:
+              StringEquals:
+                "aws:PrincipalAccount": !Ref AWS::AccountId
+              StringLike:
+                "aws:PrincipalOrgID": "organization:brignano:project:*:workspace:*:run_phase:*"
           - Effect: "Allow"
             Action:
               - "lambda:Get*"
@@ -99,8 +120,13 @@ Resources:
               - "lambda:Tag*"
               - "lambda:Add*"
             Resource:
-              - "arn:aws:lambda:us-east-1:549188633263:function:*"
-              - "arn:aws:lambda:us-east-1:549188633263:role:*"
+              - !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:*"
+              - !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:role:*"
+            Condition:
+              StringEquals:
+                "aws:PrincipalAccount": !Ref AWS::AccountId
+              StringLike:
+                "aws:PrincipalOrgID": "organization:brignano:project:*:workspace:*:run_phase:*"
 
 Outputs:
   TerraformCloudAssumeRoleArn:
