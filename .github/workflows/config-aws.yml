@@ -29,7 +29,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ASSUME_ROLE_ARN }}
-          role-session-name: GitHub_to_AWS_via_FederatedOIDC
+          role-session-name: ${{ github.repository_owner }}-${{ github.event.repository.name }}
           aws-region: ${{ env.AWS_REGION }}
       - name: Validate Template
         run: sam validate -t cloudformation/template.yml --lint
