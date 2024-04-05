@@ -1,4 +1,4 @@
-name: Terraform Assume Role
+name: Configure AWS
 
 on:
   pull_request:
