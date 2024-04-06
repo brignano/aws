@@ -1,16 +1,16 @@
-name: Configure AWS
+name: Setup Terraform
 
 on:
   pull_request:
     paths:
       - cloudformation/template.yml
-      - .github/workflows/config-aws.yml
+      - .github/workflows/setup-terraform.yml
   push:
     branches:
       - main
     paths:
       - cloudformation/template.yml
-      - .github/workflows/config-aws.yml
+      - .github/workflows/setup-terraform.yml
 
 env:
   AWS_REGION: us-east-1
@@ -20,7 +20,8 @@ permissions:
   contents: read
 
 jobs:
-  setup:
+  configure-aws:
+    name: Configure AWS
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
