@@ -4,11 +4,11 @@ on:
   pull_request:
     paths:
       - "iac/**"
-      - ".github/workflows/terraform-plan.yml"
+      - ".github/workflows/test.yml"
   push:
     paths:
       - "iac/**"
-      - ".github/workflows/terraform-plan.yml"
+      - ".github/workflows/test.yml"
 
 permissions:
   pull-requests: write
@@ -26,13 +26,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup terraform
-        uses: hashicorp/setup-terraform@v3
+      - uses: hashicorp/setup-terraform@v3
         with:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-      - name: terraform fmt
+      - run: terraform fmt -check
         id: fmt
-        run: terraform fmt -check
         continue-on-error: true
       - run: terraform init
         id: init
