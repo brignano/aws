@@ -1,4 +1,4 @@
-name: test
+name: terraform plan
 
 on:
   pull_request:
@@ -14,7 +14,6 @@ env:
 
 jobs:
   plan:
-    name: "terraform plan"
     runs-on: ubuntu-latest
     permissions:
       contents: read

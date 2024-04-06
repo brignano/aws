@@ -1,4 +1,4 @@
-name: deploy
+name: terraform apply
 
 on:
   push:
@@ -16,7 +16,6 @@ env:
 
 jobs:
   apply:
-    name: "terraform apply"
     runs-on: ubuntu-latest
     permissions:
       contents: read

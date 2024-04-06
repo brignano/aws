@@ -1,4 +1,4 @@
-name: setup
+name: aws setup
 
 on:
   push:
@@ -6,19 +6,19 @@ on:
       - main
     paths:
       - cloudformation/template.yml
-      - .github/workflows/setup.yml
+      - .github/workflows/aws-setup.yml
 
 env:
   AWS_REGION: us-east-1
 
-permissions:
-  id-token: write
-  contents: read
+
 
 jobs:
   cloudformation:
-    name: cloudformation
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - uses: actions/checkout@v4
       - name: Configure AWS Credentials
