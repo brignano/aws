@@ -17,7 +17,7 @@ permissions:
 
 jobs:
   cloudformation:
-    name: cloudformation deploy
+    name: cloudformation
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
