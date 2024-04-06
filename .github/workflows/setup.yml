@@ -39,8 +39,5 @@ jobs:
           no-fail-on-empty-changeset: "1"
       - name: Add Link to Workflow Summary
         run: |
-          echo " \
-          # AWS Resources  \
-          - [TerraformAssumeRoleSetup | CloudFormation | ${{ env.AWS_REGION }}](https://console.aws.amazon.com/cloudformation/home?region=${{ env.AWS_REGION }}#/stacks/stackinfo?filteringText=TerraformAssumeRoleSetup&stackId=${{ steps.deploy.outputs.stack-id }}) \
-          " \
+          echo "[TerraformAssumeRoleSetup | CloudFormation | ${{ env.AWS_REGION }}](https://console.aws.amazon.com/cloudformation/home?region=${{ env.AWS_REGION }}#/stacks/stackinfo?filteringText=TerraformAssumeRoleSetup&stackId=${{ steps.deploy.outputs.stack-id }})" \
           >> $GITHUB_STEP_SUMMARY
