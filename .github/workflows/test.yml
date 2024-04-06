@@ -2,10 +2,8 @@ name: test
 
 on:
   pull_request:
-    paths:
-      - "iac/**"
-      - ".github/workflows/test.yml"
-  push:
+    branches:
+      - main
     paths:
       - "iac/**"
       - ".github/workflows/test.yml"
