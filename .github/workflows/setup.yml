@@ -6,7 +6,7 @@ on:
       - main
     paths:
       - cloudformation/template.yml
-      - .github/workflows/aws-config.yml
+      - .github/workflows/setup.yml
 
 env:
   AWS_REGION: us-east-1
