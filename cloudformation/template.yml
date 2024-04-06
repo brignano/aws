@@ -96,9 +96,6 @@ Resources:
             Resource:
               - !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:*"
               - !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:role:*"
-            Condition:
-              StringEquals:
-                "aws:PrincipalArn": !Sub "arn:aws:sts::${AWS::AccountId}:assumed-role/TerraformCloudAssumeRole/*"
 
 Outputs:
   TerraformCloudAssumeRoleArn:
