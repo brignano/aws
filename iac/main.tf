@@ -188,7 +188,7 @@ resource "aws_iam_policy" "email" {
         "logs:CreateLogGroup",
         "logs:PutLogEvents"
       ],
-      "Resource": "${aws_lambda_function.email}"
+      "Resource": "${aws_lambda_function.email.arn}"
     },
     {
       "Sid": "AllowLambdaToSendEmails",
