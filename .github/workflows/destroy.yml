@@ -1,11 +1,11 @@
-name: Destroy
+name: destroy
 
 on:
   workflow_dispatch:
 
 jobs:
   destroy:
-    name: Terraform Destory
+    name: terraform destory
     runs-on: ubuntu-latest
     defaults:
       run:

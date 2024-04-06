@@ -1,11 +1,11 @@
-name: Deploy
+name: deploy
 
 on:
   workflow_dispatch:
 
 jobs:
   apply:
-    name: Terraform Apply
+    name: terraform apply
     runs-on: ubuntu-latest
     defaults:
       run:
