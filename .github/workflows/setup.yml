@@ -42,5 +42,5 @@ jobs:
           echo " \
           # AWS Resources\n \
           - [TerraformAssumeRoleSetup | CloudFormation | ${{ env.AWS_REGION }}](https://console.aws.amazon.com/cloudformation/home?region=${{ env.AWS_REGION }}#/stacks/stackinfo?filteringText=TerraformAssumeRoleSetup&stackId=${{ steps.deploy.outputs.stack-id }}) \
-          "
+          " \
           >> $GITHUB_STEP_SUMMARY
