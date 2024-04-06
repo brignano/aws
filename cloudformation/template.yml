@@ -40,11 +40,6 @@ Resources:
             Action:
               - "amplify:*"
             Resource: !Sub "arn:aws:amplify:${AWS::Region}:${AWS::AccountId}:apps/*"
-            Condition:
-              StringEquals:
-                "aws:PrincipalAccount": !Ref AWS::AccountId
-              StringLike:
-                "aws:PrincipalOrgID": "organization:brignano:project:*:workspace:*:run_phase:*"
           - Effect: "Allow"
             Action:
               - "route53:*"
@@ -52,21 +47,11 @@ Resources:
               - "arn:aws:route53:::hostedzone/Z03854061GJ89FG9XI2HY" # brignano.io
               - "arn:aws:route53:::hostedzone/Z03941761P902ZZ5Z2ZNA" # anthonybrignano.com
               - "arn:aws:route53:::change/*"
-            Condition:
-              StringEquals:
-                "aws:PrincipalAccount": !Ref AWS::AccountId
-              StringLike:
-                "aws:PrincipalOrgID": "organization:brignano:project:*:workspace:*:run_phase:*"
           - Effect: "Allow"
             Action:
               - "route53:ListHostedZones"
             Resource:
               - "*"
-            Condition:
-              StringEquals:
-                "aws:PrincipalAccount": !Ref AWS::AccountId
-              StringLike:
-                "aws:PrincipalOrgID": "organization:brignano:project:*:workspace:*:run_phase:*"
           - Effect: "Allow"
             Action:
               - "s3:*"
@@ -76,8 +61,6 @@ Resources:
             Condition:
               StringEquals:
                 "aws:PrincipalAccount": !Ref AWS::AccountId
-              StringLike:
-                "aws:PrincipalOrgID": "organization:brignano:project:*:workspace:*:run_phase:*"
           - Effect: "Allow"
             Action:
               - "ses:Describe*"
@@ -89,9 +72,7 @@ Resources:
             Resource: "*"
             Condition:
               StringEquals:
-                "aws:PrincipalAccount": !Ref AWS::AccountId
-              StringLike:
-                "aws:PrincipalOrgID": "organization:brignano:project:*:workspace:*:run_phase:*"
+                "aws:PrincipalArn": !Sub "arn:aws:sts::${AWS::AccountId}:assumed-role/TerraformCloudAssumeRole/*"
           - Effect: "Allow"
             Action:
               - "iam:List*"
@@ -107,9 +88,7 @@ Resources:
               - !Sub "arn:aws:iam::${AWS::AccountId}:policy/*"
             Condition:
               StringEquals:
-                "aws:PrincipalAccount": !Ref AWS::AccountId
-              StringLike:
-                "aws:PrincipalOrgID": "organization:brignano:project:*:workspace:*:run_phase:*"
+                "aws:PrincipalArn": !Sub "arn:aws:sts::${AWS::AccountId}:assumed-role/TerraformCloudAssumeRole/*"
           - Effect: "Allow"
             Action:
               - "lambda:Get*"
@@ -124,9 +103,7 @@ Resources:
               - !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:role:*"
             Condition:
               StringEquals:
-                "aws:PrincipalAccount": !Ref AWS::AccountId
-              StringLike:
-                "aws:PrincipalOrgID": "organization:brignano:project:*:workspace:*:run_phase:*"
+                "aws:PrincipalArn": !Sub "arn:aws:sts::${AWS::AccountId}:assumed-role/TerraformCloudAssumeRole/*"
 
 Outputs:
   TerraformCloudAssumeRoleArn:
