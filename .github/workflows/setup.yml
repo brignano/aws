@@ -1,10 +1,6 @@
 name: setup
 
 on:
-  pull_request:
-    paths:
-      - cloudformation/template.yml
-      - .github/workflows/aws-config.yml
   push:
     branches:
       - main
@@ -43,8 +39,8 @@ jobs:
           no-fail-on-empty-changeset: "1"
       - name: Add Link to Workflow Summary
         run: |
-          echo "
-          # AWS Resources\n
-          - [TerraformAssumeRoleSetup | CloudFormation | ${{ env.AWS_REGION }}](https://console.aws.amazon.com/cloudformation/home?region=${{ env.AWS_REGION }}#/stacks/stackinfo?filteringText=TerraformAssumeRoleSetup&stackId=${{ steps.deploy.outputs.stack-id }})
-          " 
+          echo " \
+          # AWS Resources\n \
+          - [TerraformAssumeRoleSetup | CloudFormation | ${{ env.AWS_REGION }}](https://console.aws.amazon.com/cloudformation/home?region=${{ env.AWS_REGION }}#/stacks/stackinfo?filteringText=TerraformAssumeRoleSetup&stackId=${{ steps.deploy.outputs.stack-id }}) \
+          "
           >> $GITHUB_STEP_SUMMARY
