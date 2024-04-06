@@ -61,9 +61,6 @@ Resources:
             Resource:
               - "arn:aws:s3:::anthonybrignano.com"
               - "arn:aws:s3:::brignano.io-email-bucket"
-            Condition:
-              StringEquals:
-                "aws:PrincipalArn": !Sub "arn:aws:sts::${AWS::AccountId}:assumed-role/TerraformCloudAssumeRole/*"
           - Effect: "Allow"
             Action:
               - "ses:Describe*"
