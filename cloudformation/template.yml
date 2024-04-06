@@ -27,12 +27,12 @@ Resources:
               StringLike:
                 "app.terraform.io:sub": "organization:brignano:project:*:workspace:*:run_phase:*"
       ManagedPolicyArns:
-        - !Ref TerraformCloudAssumeRolePolicy
+        - !Ref TerraformCloudAssumePolicy
 
-  TerraformCloudAssumeRolePolicy:
+  TerraformCloudAssumePolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
-      ManagedPolicyName: TerraformCloudAssumeRolePolicy
+      ManagedPolicyName: TerraformCloudAssumePolicy
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
