@@ -1,10 +1,11 @@
-name: Terraform Apply
+name: Deploy
 
 on:
   workflow_dispatch:
 
 jobs:
   apply:
+    name: Terraform Apply
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -16,7 +17,6 @@ jobs:
         with:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
       - run: terraform init
-      - name: Run terraform apply
-        run: terraform apply -auto-approve
+      - run: terraform apply -auto-approve
         env:
           TF_VAR_amplify_access_token: ${{ secrets.AMPLIFY_ACCESS_TOKEN }}
