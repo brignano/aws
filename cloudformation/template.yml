@@ -52,6 +52,9 @@ Resources:
               - "route53:ListHostedZones"
             Resource:
               - "*"
+            Condition:
+              StringEquals:
+                "aws:PrincipalArn": !Sub "arn:aws:sts::${AWS::AccountId}:assumed-role/TerraformCloudAssumeRole/*"
           - Effect: "Allow"
             Action:
               - "s3:*"
@@ -60,7 +63,7 @@ Resources:
               - "arn:aws:s3:::brignano.io-email-bucket"
             Condition:
               StringEquals:
-                "aws:PrincipalAccount": !Ref AWS::AccountId
+                "aws:PrincipalArn": !Sub "arn:aws:sts::${AWS::AccountId}:assumed-role/TerraformCloudAssumeRole/*"
           - Effect: "Allow"
             Action:
               - "ses:Describe*"
