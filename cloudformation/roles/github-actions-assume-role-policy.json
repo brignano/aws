@@ -1,0 +1,51 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "TerraformAssumeRoleSetup",
+            "Effect": "Allow",
+            "Action": [
+                "cloudformation:CreateStack",
+                "cloudformation:DescribeStacks",
+                "cloudformation:CreateChangeSet",
+                "cloudformation:DescribeChangeSet",
+                "cloudformation:DeleteChangeSet",
+                "cloudformation:ExecuteChangeSet"
+            ],
+            "Resource": "arn:aws:cloudformation:us-east-1:549188633263:stack/TerraformAssumeRoleSetup/*"
+        },
+        {
+            "Sid": "TerraformOidcProvider",
+            "Effect": "Allow",
+            "Action": [
+                "iam:ListOpenIDConnectProviders",
+                "iam:CreateOpenIDConnectProvider",
+                "iam:DeleteOpenIDConnectProvider",
+                "iam:GetOpenIDConnectProvider"
+            ],
+            "Resource": "arn:aws:iam::549188633263:oidc-provider/app.terraform.io"
+        },
+        {
+            "Sid": "TerraformCloudAssumePolicy",
+            "Effect": "Allow",
+            "Action": [
+                "iam:CreatePolicy",
+                "iam:ListPolicyVersions",
+                "iam:CreatePolicyVersion",
+                "iam:DeletePolicyVersion"
+            ],
+            "Resource": "arn:aws:iam::549188633263:policy/TerraformCloudAssumePolicy"
+        },
+        {
+            "Sid": "TerraformCloudAssumeRole",
+            "Effect": "Allow",
+            "Action": [
+                "iam:GetRole",
+                "iam:CreateRole",
+                "iam:AttachRolePolicy",
+                "iam:UpdateAssumeRolePolicy"
+            ],
+            "Resource": "arn:aws:iam::549188633263:role/TerraformCloudAssumeRole"
+        }
+    ]
+}
