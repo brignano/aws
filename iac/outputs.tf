@@ -14,7 +14,7 @@ output "email_forwarding_lambda_arn" {
 }
 
 output "primary_website" {
-  value       = aws_route53_zone.default.name
+  value       = "https://${aws_route53_zone.default.name}"
   description = "The default website domain name."
 }
 
@@ -24,7 +24,7 @@ output "primary_hosted_zone_id" {
 }
 
 output "secondary_website" {
-  value       = aws_route53_zone.backup.name
+  value       = "https://${aws_route53_zone.backup.name}"
   description = "The backup website domain name."
 }
 
