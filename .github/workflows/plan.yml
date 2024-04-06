@@ -4,7 +4,7 @@ on:
   pull_request:
     paths:
       - "iac/**"
-      - ".github/workflows/test.yml"
+      - ".github/workflows/plan.yml"
 
 env:
   TF_CLOUD_ORGANIZATION: "brignano"
