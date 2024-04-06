@@ -73,9 +73,7 @@ Resources:
               - "ses:Describe*"
               - "ses:Update*"
             Resource: "*"
-            Condition:
-              StringEquals:
-                "aws:PrincipalArn": !Sub "arn:aws:sts::${AWS::AccountId}:assumed-role/TerraformCloudAssumeRole/*"
+            # todo: add condition(s) to limit access
           - Effect: "Allow"
             Action:
               - "iam:List*"
@@ -89,9 +87,6 @@ Resources:
               - !Sub "arn:aws:iam::${AWS::AccountId}:user/*"
               - !Sub "arn:aws:iam::${AWS::AccountId}:role/*"
               - !Sub "arn:aws:iam::${AWS::AccountId}:policy/*"
-            Condition:
-              StringEquals:
-                "aws:PrincipalArn": !Sub "arn:aws:sts::${AWS::AccountId}:assumed-role/TerraformCloudAssumeRole/*"
           - Effect: "Allow"
             Action:
               - "lambda:Get*"
