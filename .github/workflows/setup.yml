@@ -16,8 +16,8 @@ permissions:
   contents: read
 
 jobs:
-  create-assume-role:
-    name: terraform assume role
+  cloudformation:
+    name: cloudformation deploy
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
