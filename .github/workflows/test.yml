@@ -1,4 +1,4 @@
-name: Terraform Plan
+name: test
 
 on:
   pull_request:
@@ -12,12 +12,14 @@ on:
 
 permissions:
   pull-requests: write
+  contents: read
 
 env:
   tf_actions_working_dir: iac/
 
 jobs:
   plan:
+    name: terraform plan
     defaults:
       run:
         working-directory: ${{ env.tf_actions_working_dir }}

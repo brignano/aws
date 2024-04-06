@@ -1,10 +1,11 @@
-name: Terraform Destroy
+name: deploy
 
 on:
   workflow_dispatch:
 
 jobs:
-  destroy:
+  apply:
+    name: terraform apply
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -16,5 +17,6 @@ jobs:
         with:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
       - run: terraform init
-      - name: Run terraform destroy
-        run: terraform destroy -auto-approve
+      - run: terraform apply -auto-approve
+        env:
+          TF_VAR_amplify_access_token: ${{ secrets.AMPLIFY_ACCESS_TOKEN }}

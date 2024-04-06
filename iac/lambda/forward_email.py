@@ -10,6 +10,7 @@
 # OF ANY KIND, either express or implied.See the License for the specific
 # language governing permissions and limitations under the License.
 
+import json
 import os
 import boto3
 import email
@@ -33,16 +34,19 @@ def get_message_from_s3(message_id):
     else:
         object_path = message_id
 
-    object_http_path = (f"http://s3.console.aws.amazon.com/s3/object/{incoming_email_bucket}/{object_path}?region={region}")
+    object_http_path = (f"https://s3.console.aws.amazon.com/s3/object/{incoming_email_bucket}/{object_path}?region={region}")
 
     # Create a new S3 client.
     client_s3 = boto3.client("s3")
 
     # Get the email object from the S3 bucket.
-    object_s3 = client_s3.get_object(Bucket = incoming_email_bucket,
-        Key = object_path)
+    object_s3 = client_s3.get_object(Bucket = incoming_email_bucket, Key = object_path)
     # Read the content of the message.
     file = object_s3['Body'].read()
+
+    email = file.decode('utf-8')
+    email = json.loads(email)
+    print(f"Email received: {email}")
 
     file_dict = {
         "file": file,
@@ -108,7 +112,7 @@ def send_email(message):
 
     # Send the email.
     try:
-    #Provide the contents of the email.
+        # Provide the contents of the email.
         response = client_ses.send_raw_email(
             Source = message['Source'],
             Destinations = [
@@ -131,6 +135,8 @@ def send_email(message):
 def lambda_handler(event, context):
     # Get the unique ID of the message.This corresponds to the name of the file in S3.
     message_id = event['Records'][0]['ses']['mail']['messageId']
+    print(f"Received SES Records: {json.dumps(event['Records'])}")
+    print(f"Received SES Event Sample: {json.dumps(event['Records'][0])}")
     print(f"Received message ID {message_id}")
 
     # Retrieve the file from the S3 bucket.

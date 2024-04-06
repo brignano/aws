@@ -188,7 +188,7 @@ resource "aws_iam_policy" "email" {
         "logs:CreateLogGroup",
         "logs:PutLogEvents"
       ],
-      "Resource": "*"
+      "Resource": "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/${aws_lambda_function.email.function_name}:*"
     },
     {
       "Sid": "AllowLambdaToSendEmails",
@@ -212,12 +212,6 @@ resource "aws_iam_role_policy_attachment" "email" {
   policy_arn = aws_iam_policy.email.arn
 }
 
-data "archive_file" "email" {
-  type        = "zip"
-  source_file = "lambda/forward_email.py"
-  output_path = "work/lambda.zip"
-}
-
 resource "aws_lambda_function" "email" {
   filename      = data.archive_file.email.output_path
   function_name = "SesForwarder" # todo: "email-forwarder"
@@ -226,14 +220,14 @@ resource "aws_lambda_function" "email" {
   timeout       = 30
   tags          = {}
 
-  source_code_hash = filebase64sha256(data.archive_file.email.output_path)
+  source_code_hash = data.archive_file.email.output_base64sha256
   runtime          = "python3.12"
   environment {
     variables = {
       MailS3Bucket  = aws_s3_bucket.email.bucket
       MailS3Prefix  = "emails"
       MailSender    = aws_ses_email_identity.email.email
-      MailRecipient = aws_ses_email_identity.email.email
+      MailRecipient = "hi@${aws_route53_zone.default.name}"
       Region        = data.aws_region.current.name
     }
   }

@@ -1,14 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
 
-Parameters:
-  TerraformThumbprint:
-    Type: String
-    Description: "Thumbprint for Terraform identity provider"
-    MinLength: 1
-    MaxLength: 40
-    AllowedPattern: "[a-fA-F0-9]+"
-    ConstraintDescription: "Terraform Thumbprint has a fixed length of 40 characters. 0-9 and A-F (not case sensitive)"
-
 Resources:
   TerraformOIDCProvider:
     Type: "AWS::IAM::OIDCProvider"
@@ -17,7 +8,7 @@ Resources:
       ClientIdList:
         - "aws.workload.identity"
       ThumbprintList:
-        - !Ref TerraformThumbprint
+        - 9e99a48a9960b14926bb7f3b02e22da2b0ab7280
 
   TerraformCloudAssumeRole:
     Type: "AWS::IAM::Role"
@@ -36,12 +27,12 @@ Resources:
               StringLike:
                 "app.terraform.io:sub": "organization:brignano:project:*:workspace:*:run_phase:*"
       ManagedPolicyArns:
-        - !Ref TerraformCloudAssumeRolePolicy
+        - !Ref TerraformCloudAssumePolicy
 
-  TerraformCloudAssumeRolePolicy:
+  TerraformCloudAssumePolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
-      ManagedPolicyName: TerraformCloudAssumeRolePolicy
+      ManagedPolicyName: TerraformCloudAssumePolicy
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -61,6 +52,9 @@ Resources:
               - "route53:ListHostedZones"
             Resource:
               - "*"
+            Condition:
+              StringEquals:
+                "aws:PrincipalArn": !Sub "arn:aws:sts::${AWS::AccountId}:assumed-role/TerraformCloudAssumeRole/*"
           - Effect: "Allow"
             Action:
               - "s3:*"
@@ -76,6 +70,7 @@ Resources:
               - "ses:Describe*"
               - "ses:Update*"
             Resource: "*"
+            # todo: add condition(s) to limit access
           - Effect: "Allow"
             Action:
               - "iam:List*"
@@ -86,9 +81,9 @@ Resources:
               - "iam:Attach*"
               - "iam:PassRole"
             Resource:
-              - "arn:aws:iam::549188633263:user/*"
-              - "arn:aws:iam::549188633263:role/*"
-              - "arn:aws:iam::549188633263:policy/*"
+              - !Sub "arn:aws:iam::${AWS::AccountId}:user/*"
+              - !Sub "arn:aws:iam::${AWS::AccountId}:role/*"
+              - !Sub "arn:aws:iam::${AWS::AccountId}:policy/*"
           - Effect: "Allow"
             Action:
               - "lambda:Get*"
@@ -99,8 +94,8 @@ Resources:
               - "lambda:Tag*"
               - "lambda:Add*"
             Resource:
-              - "arn:aws:lambda:us-east-1:549188633263:function:*"
-              - "arn:aws:lambda:us-east-1:549188633263:role:*"
+              - !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:*"
+              - !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:role:*"
 
 Outputs:
   TerraformCloudAssumeRoleArn:
