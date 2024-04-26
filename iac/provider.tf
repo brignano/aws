@@ -7,6 +7,7 @@ terraform {
   cloud {
     organization = "brignano"
     workspaces {
+      # todo: add project and tags
       name = "aws-config"
     }
   }
