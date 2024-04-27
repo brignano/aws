@@ -161,12 +161,12 @@ resource "aws_iam_role" "email" {
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Sid": "AllowLambdaAssumeRole"
+      "Sid": "AllowLambdaAssumeRole",
       "Effect": "Allow",
       "Action": "sts:AssumeRole",
       "Principal": {
         "Service": "lambda.amazonaws.com"
-      },
+      }
     }
   ]
 }
