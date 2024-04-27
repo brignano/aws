@@ -167,11 +167,6 @@ resource "aws_iam_role" "email" {
       "Principal": {
         "Service": "lambda.amazonaws.com"
       },
-      "Condition": {
-        "StringEquals": {
-          "aws:SourceAccount": "${data.aws_caller_identity.current.account_id}"
-        }
-      }
     }
   ]
 }
