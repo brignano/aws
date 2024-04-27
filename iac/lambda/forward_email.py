@@ -140,7 +140,7 @@ def send_email(message):
 
 def lambda_handler(event, context):
     # Get the unique ID of the message.This corresponds to the name of the file in S3.
-    logger.info(f"{len(event['Records'])} SES Records: {json.dumps(event['Records'])}")
+    logger.info(f"SES Records (len={len(event['Records'])}): {json.dumps(event['Records'])}")
     message_id = event['Records'][0]['ses']['mail']['messageId']
     logger.debug(f"Sample SES Event: {json.dumps(event['Records'][0])}")
     logger.info(f"Forwarding message ID {message_id}")
