@@ -144,7 +144,7 @@ resource "aws_s3_bucket_policy" "email" {
       "Resource": "${aws_s3_bucket.email.arn}/emails/*",
       "Condition": {
         "StringEquals": {
-          "aws:SourceAccount": "${data.aws_caller_identity.current.account_id}"
+          "aws:Referer": "${data.aws_caller_identity.current.account_id}"
         }
       }
     }
