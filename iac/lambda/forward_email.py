@@ -15,6 +15,9 @@ import os
 import boto3
 import email
 import re
+import logging
+logger = logging.getLogger()
+logger.setLevel(os.environ['LogLevel'] or "INFO")
 
 from botocore.exceptions import ClientError
 from email.mime.multipart import MIMEMultipart
@@ -46,7 +49,7 @@ def get_message_from_s3(message_id):
 
     email = file.decode('utf-8')
     email = json.loads(email)
-    print(f"Email received: {email}")
+    logger.info(f"Email received: {email}")
 
     file_dict = {
         "file": file,
@@ -134,10 +137,10 @@ def send_email(message):
 
 def lambda_handler(event, context):
     # Get the unique ID of the message.This corresponds to the name of the file in S3.
+    logger.info(f"{len(event['Records'])} SES Records: {json.dumps(event['Records'])}")
     message_id = event['Records'][0]['ses']['mail']['messageId']
-    print(f"Received SES Records: {json.dumps(event['Records'])}")
-    print(f"Received SES Event Sample: {json.dumps(event['Records'][0])}")
-    print(f"Received message ID {message_id}")
+    logger.debug(f"Received SES Event Sample: {json.dumps(event['Records'][0])}")
+    logger.info(f"Forwarding message ID {message_id}")
 
     # Retrieve the file from the S3 bucket.
     file_dict = get_message_from_s3(message_id)
@@ -145,6 +148,6 @@ def lambda_handler(event, context):
     # Create the message.
     message = create_message(file_dict)
 
-    # Send the email and print the result.
+    # Send the email and log the result.
     result = send_email(message)
-    print(result)
+    logger.info(result)
