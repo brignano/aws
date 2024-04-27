@@ -79,6 +79,7 @@ Resources:
               - "iam:Tag*"
               - "iam:Update*"
               - "iam:Attach*"
+              - "iam:Detach*"
               - "iam:PassRole"
             Resource:
               - !Sub "arn:aws:iam::${AWS::AccountId}:user/*"
