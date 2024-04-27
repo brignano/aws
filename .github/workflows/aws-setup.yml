@@ -11,8 +11,6 @@ on:
 env:
   AWS_REGION: us-east-1
 
-
-
 jobs:
   cloudformation:
     runs-on: ubuntu-latest
