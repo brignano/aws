@@ -144,7 +144,7 @@ resource "aws_s3_bucket_policy" "email" {
       "Resource": "${aws_s3_bucket.email.arn}/emails/*",
       "Condition": {
         "StringEquals": {
-        "aws:Referer": "${data.aws_caller_identity.current.account_id}"
+          "aws:Referer": "${data.aws_caller_identity.current.account_id}"
         }
       }
     }
@@ -154,19 +154,19 @@ EOF
 }
 
 resource "aws_iam_role" "email" {
-  name               = "LambdaSesForwarder"
+  name               = "LambdaSesForwarderRole"
   path               = "/"
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
   "Statement": [
     {
+      "Sid": "AllowLambdaAssumeRole",
+      "Effect": "Allow",
       "Action": "sts:AssumeRole",
       "Principal": {
         "Service": "lambda.amazonaws.com"
-      },
-      "Effect": "Allow",
-      "Sid": "AllowLambdaAssumeRole"
+      }
     }
   ]
 }
@@ -174,7 +174,7 @@ EOF
 }
 
 resource "aws_iam_policy" "email" {
-  name = "LambdaSesForwarder"
+  name = "LambdaSesForwarderPolicy"
 
   policy = <<EOF
 {
@@ -229,6 +229,7 @@ resource "aws_lambda_function" "email" {
       MailSender    = aws_ses_email_identity.email.email
       MailRecipient = "hi@${aws_route53_zone.default.name}"
       Region        = data.aws_region.current.name
+      LogLevel      = "DEBUG"
     }
   }
 }
