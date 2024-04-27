@@ -16,7 +16,7 @@ import boto3
 import email
 import re
 import logging
-logger = logging.getLogger()
+logger = logging.getLogger('forward_email')
 logger.setLevel(os.environ['LogLevel'] or "INFO")
 
 from botocore.exceptions import ClientError
