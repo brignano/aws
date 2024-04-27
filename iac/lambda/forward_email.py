@@ -37,23 +37,26 @@ def get_message_from_s3(message_id):
     else:
         object_path = message_id
 
-    object_http_path = (f"https://s3.console.aws.amazon.com/s3/object/{incoming_email_bucket}/{object_path}?region={region}")
+    object_https_path = (f"https://s3.console.aws.amazon.com/s3/object/{incoming_email_bucket}/{object_path}?region={region}")
+
+    logger.debug(f"Getting email from {object_https_path}")
 
     # Create a new S3 client.
     client_s3 = boto3.client("s3")
 
     # Get the email object from the S3 bucket.
     object_s3 = client_s3.get_object(Bucket = incoming_email_bucket, Key = object_path)
+    logger.debug(f"S3 object: {object_s3}")
     # Read the content of the message.
     file = object_s3['Body'].read()
-
     email = file.decode('utf-8')
     email = json.loads(email)
-    logger.info(f"Email received: {email}")
+    
+    logger.info(f"Email content: {email}")
 
     file_dict = {
         "file": file,
-        "path": object_http_path
+        "path": object_https_path
     }
 
     return file_dict
@@ -139,7 +142,7 @@ def lambda_handler(event, context):
     # Get the unique ID of the message.This corresponds to the name of the file in S3.
     logger.info(f"{len(event['Records'])} SES Records: {json.dumps(event['Records'])}")
     message_id = event['Records'][0]['ses']['mail']['messageId']
-    logger.debug(f"Received SES Event Sample: {json.dumps(event['Records'][0])}")
+    logger.debug(f"Sample SES Event: {json.dumps(event['Records'][0])}")
     logger.info(f"Forwarding message ID {message_id}")
 
     # Retrieve the file from the S3 bucket.
