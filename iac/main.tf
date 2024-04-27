@@ -122,14 +122,12 @@ resource "aws_s3_bucket_ownership_controls" "email" {
 
 resource "aws_s3_bucket_acl" "email" {
   depends_on = [aws_s3_bucket_ownership_controls.email]
-
   bucket = aws_s3_bucket.email.id
   acl    = "private"
 }
 
 resource "aws_s3_bucket_policy" "email" {
   bucket = aws_s3_bucket.email.id
-
   policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -174,7 +172,6 @@ EOF
 
 resource "aws_iam_policy" "email" {
   name = "LambdaSesForwarderPolicy"
-
   policy = <<EOF
 {
   "Version": "2012-10-17",
