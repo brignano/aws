@@ -155,7 +155,6 @@ EOF
 
 resource "aws_iam_role" "email" {
   name               = "LambdaSesForwarderRole"
-  path               = "/"
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
