@@ -154,7 +154,7 @@ EOF
 }
 
 resource "aws_iam_role" "email" {
-  name               = "LambdaSesForwarder"
+  name               = "LambdaSesForwarderRole"
   path               = "/"
   assume_role_policy = <<EOF
 {
@@ -174,7 +174,7 @@ EOF
 }
 
 resource "aws_iam_policy" "email" {
-  name = "LambdaSesForwarder"
+  name = "LambdaSesForwarderPolicy"
 
   policy = <<EOF
 {
