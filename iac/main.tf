@@ -234,6 +234,7 @@ resource "aws_lambda_function" "email" {
       MailSender    = aws_ses_email_identity.email.email
       MailRecipient = "hi@${aws_route53_zone.default.name}"
       Region        = data.aws_region.current.name
+      LogLevel      = "DEBUG"
     }
   }
 }
