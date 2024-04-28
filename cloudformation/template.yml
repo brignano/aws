@@ -101,6 +101,7 @@ Resources:
           - Effect: "Allow"
             Action:
               - "logs:CreateLogGroup"
+              - "logs:DeleteLogGroup"
               - "logs:TagResource"
               - "logs:PutRetentionPolicy"
               - "logs:ListTagsLogGroup"
