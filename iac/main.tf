@@ -149,7 +149,7 @@ data "aws_iam_policy_document" "s3_bucket" {
     condition {
       test     = "StringEquals"
       variable = "aws:Referer"
-      values = ["data.aws_caller_identity.current.account_id"]
+      values = ["${data.aws_caller_identity.current.account_id}"]
     }
   }
 }
