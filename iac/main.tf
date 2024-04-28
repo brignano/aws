@@ -232,8 +232,8 @@ data "aws_iam_policy_document" "send_raw_email" {
 }
 
 resource "aws_iam_policy" "send_raw_email" {
-  name        = "S3GetObjectPolicy"
-  description = "Allow Lambda to get emails from S3."
+  name        = "SesSendRawEmailPolicy"
+  description = "Allow Lambda to send raw emails through SES."
   policy      = data.aws_iam_policy_document.send_raw_email.json
 }
 
