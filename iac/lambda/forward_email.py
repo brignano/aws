@@ -46,13 +46,13 @@ def get_message_from_s3(message_id):
 
     # Get the email object from the S3 bucket.
     object_s3 = client_s3.get_object(Bucket = incoming_email_bucket, Key = object_path)
-    logger.debug(f"S3 object: {json.dumps(object_s3)}")
+    logger.debug(f"S3 object: {json.dumps(object_s3, default=str)}")
     
     # Read the content of the message.
     file = object_s3['Body'].read()
-    # email = file.decode('utf-8')
-    # email = json.loads(email, default=str)
-    # logger.info(f"File content: {json.dumps(file, default=str)}")
+    email = file.decode('utf-8')
+    email = json.loads(email, default=str)
+    logger.info(f"File content: {json.dumps(email, default=str)}")
 
     file_dict = {
         "file": file,
