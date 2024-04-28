@@ -59,6 +59,7 @@ Resources:
             Action:
               - "s3:*"
             Resource:
+              - "arn:aws:s3:::www.anthonybrignano.com"
               - "arn:aws:s3:::anthonybrignano.com"
               - "arn:aws:s3:::brignano.io-email-bucket"
           - Effect: "Allow"
