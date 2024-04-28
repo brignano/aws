@@ -75,6 +75,18 @@ resource "aws_s3_bucket_website_configuration" "redirect" {
   }
 }
 
+resource "aws_s3_bucket" "redirect_www" {
+  bucket = "www.${local.domain_name.backup}"
+}
+
+resource "aws_s3_bucket_website_configuration" "redirect_www" {
+  bucket = aws_s3_bucket.redirect_www.bucket
+  redirect_all_requests_to {
+    host_name = aws_route53_zone.default.name
+    protocol  = "https"
+  }
+}
+
 ################
 # email config #
 ################
