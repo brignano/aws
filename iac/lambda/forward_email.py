@@ -50,9 +50,7 @@ def get_message_from_s3(message_id):
     
     # Read the content of the message.
     file = object_s3['Body'].read()
-    email = file.decode('utf-8')
-    # email = json.load(email)
-    logger.debug(f"Email content: {json.dumps(email)}")
+    logger.debug(f"Email content: {json.dumps(file, default=str)}")
 
     file_dict = {
         "file": file,
@@ -71,9 +69,10 @@ def create_message(file_dict):
     # Parse the email body.
     mailobject = email.message_from_string(file_dict['file'].decode('utf-8'))
 
+    logger.info(f"Mail object: {json.dumps(mailobject, default=str)}")
+
     # Create a new subject line.
-    subject_original = mailobject['Subject']
-    subject = "FW: " + subject_original
+    subject = mailobject['Subject']
 
     # The body text of the email.
     body_text = ("The attached message was received from "
@@ -82,7 +81,7 @@ def create_message(file_dict):
 
     # The file name to use for the attached message.Uses regex to remove all
     # non - alphanumeric characters, and appends a file extension.
-    filename = re.sub('[^0-9a-zA-Z]+', '_', subject_original) + ".eml"
+    filename = re.sub('[^0-9a-zA-Z]+', '_', subject) + ".eml"
 
     # Create a MIME container.
     msg = MIMEMultipart()
