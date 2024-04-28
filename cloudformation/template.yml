@@ -108,6 +108,7 @@ Resources:
           - Effect: "Allow"
             Action:
               - "logs:DescribeLogGroups"
+              - "logs:ListTagsLogGroup"
             Resource:
               - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group::log-stream:"
 
