@@ -69,7 +69,7 @@ def create_message(file_dict):
     # Parse the email body.
     mailobject = email.message_from_string(file_dict['file'].decode('utf-8'))
 
-    logger.info(f"Mail object: {json.dumps(mailobject)}")
+    # logger.info(f"Mail object: {json.dumps(mailobject)}")
 
     # Create a new subject line.
     subject = mailobject.get('Subject')
