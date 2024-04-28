@@ -102,6 +102,7 @@ Resources:
             Action:
               - "logs:CreateLogGroup"
               - "logs:TagResource"
+              - "logs:PutRetentionPolicy"
             Resource:
               - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*"
 
