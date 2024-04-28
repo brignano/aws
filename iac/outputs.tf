@@ -23,7 +23,7 @@ output "primary_hosted_zone_id" {
   description = "The default hosted zone ID."
 }
 
-output "secondary_website" {
+output "backup_website" {
   value       = "https://${aws_route53_zone.backup.name}"
   description = "The backup website domain name."
 }

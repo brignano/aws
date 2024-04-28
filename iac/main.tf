@@ -128,84 +128,123 @@ resource "aws_s3_bucket_acl" "email" {
 
 resource "aws_s3_bucket_policy" "email" {
   bucket = aws_s3_bucket.email.id
-  policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Sid": "AllowSESPuts",
-      "Effect": "Allow",
-      "Principal": {
-        "Service": "ses.amazonaws.com"
-      },
-      "Action": "s3:PutObject",
-      "Resource": "${aws_s3_bucket.email.arn}/emails/*",
-      "Condition": {
-        "StringEquals": {
-          "aws:Referer": "${data.aws_caller_identity.current.account_id}"
-        }
-      }
-    }
-  ]
+  policy = data.aws_iam_policy_document.s3_bucket.json
 }
-EOF
+
+data "aws_iam_policy_document" "s3_bucket" {
+  statement {
+    actions = [
+      "s3:GetObject",
+    ]
+
+    resources = [
+      "${aws_s3_bucket.email.arn}/emails/*"
+    ]
+
+    principals {
+      type        = "Service"
+      identifiers = ["ses.amazonaws.com"]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:referer"
+      values = ["data.aws_caller_identity.current.account_id"]
+    }
+  }
 }
 
 resource "aws_iam_role" "email" {
   name               = "LambdaSesForwarderRole"
-  assume_role_policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Sid": "AllowLambdaAssumeRole",
-      "Effect": "Allow",
-      "Action": "sts:AssumeRole",
-      "Principal": {
-        "Service": "lambda.amazonaws.com"
-      }
-    }
-  ]
-}
-EOF
+  assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
 }
 
-resource "aws_iam_policy" "email" {
-  name = "LambdaSesForwarderPolicy"
-  policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Sid": "AllowLambdaToCreateLogs",
-      "Effect": "Allow",
-      "Action": [
-        "logs:CreateLogStream",
-        "logs:CreateLogGroup",
-        "logs:PutLogEvents"
-      ],
-      "Resource": "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/${aws_lambda_function.email.function_name}:*"
-    },
-    {
-      "Sid": "AllowLambdaToSendEmails",
-      "Effect": "Allow",
-      "Action": [
-        "s3:GetObject",
-        "ses:SendRawEmail"
-      ],
-      "Resource": [
-        "${aws_s3_bucket.email.arn}/emails/*",
-        "arn:aws:ses:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:identity/*"
-      ]
+data "aws_iam_policy_document" "assume_role_policy" {
+  statement {
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["lambda.amazonaws.com"]
     }
-  ]
-}
-EOF
+  }
 }
 
-resource "aws_iam_role_policy_attachment" "email" {
+resource "aws_cloudwatch_log_group" "email_logs" {
+  name              = "/aws/lambda/${aws_lambda_function.email.function_name}"
+  retention_in_days = 30
+}
+
+data "aws_iam_policy_document" "lambda_logs" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "logs:CreateLogStream",
+      "logs:PutLogEvents",
+    ]
+
+    resources = ["arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/${aws_lambda_function.email.function_name}:*",]
+  }
+}
+
+resource "aws_iam_policy" "lambda_logs" {
+  name        = "LambdaLogsPolicy"
+  description = "Allow email forwarding Lambda to create logs."
+  policy      = data.aws_iam_policy_document.lambda_logs.json
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_logs" {
   role       = aws_iam_role.email.name
-  policy_arn = aws_iam_policy.email.arn
+  policy_arn = aws_iam_policy.lambda_logs.arn
+}
+
+data "aws_iam_policy_document" "s3_get_object" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "s3:GetObject",
+    ]
+
+    resources = ["${aws_s3_bucket.email.arn}/emails/*",]
+  }
+}
+
+resource "aws_iam_policy" "s3_get_object" {
+  name        = "S3GetObjectPolicy"
+  description = "Allow Lambda to get emails from S3."
+  policy      = data.aws_iam_policy_document.s3_get_object.json
+}
+
+resource "aws_iam_role_policy_attachment" "s3_get_object" {
+  role       = aws_iam_role.email.name
+  policy_arn = aws_iam_policy.s3_get_object.arn
+}
+
+data "aws_iam_policy_document" "send_raw_email" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "ses:SendRawEmail",
+    ]
+
+    resources = [
+      "arn:aws:ses:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:identity/*",
+      ]
+  }
+}
+
+resource "aws_iam_policy" "send_raw_email" {
+  name        = "SesSendRawEmailPolicy"
+  description = "Allow Lambda to send raw emails through SES."
+  policy      = data.aws_iam_policy_document.send_raw_email.json
+}
+
+resource "aws_iam_role_policy_attachment" "send_raw_email" {
+  role       = aws_iam_role.email.name
+  policy_arn = aws_iam_policy.send_raw_email.arn
 }
 
 resource "aws_lambda_function" "email" {
