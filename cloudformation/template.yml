@@ -103,9 +103,13 @@ Resources:
               - "logs:CreateLogGroup"
               - "logs:TagResource"
               - "logs:PutRetentionPolicy"
-              - "logs:DescribeLogGroups"
             Resource:
               - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/*"
+          - Effect: "Allow"
+            Action:
+              - "logs:DescribeLogGroups"
+            Resource:
+              - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group::log-stream:"
 
 Outputs:
   TerraformCloudAssumeRoleArn:
