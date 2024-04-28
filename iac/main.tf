@@ -186,7 +186,7 @@ data "aws_iam_policy_document" "lambda_logs" {
 resource "aws_iam_policy" "lambda_logs" {
   name        = "LambdaLogsPolicy"
   description = "Allow email forwarding Lambda to create logs."
-  policy      = data.aws_iam_policy_document.lambda_logs
+  policy      = data.aws_iam_policy_document.lambda_logs.json
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_logs" {
@@ -209,7 +209,7 @@ data "aws_iam_policy_document" "s3_get_object" {
 resource "aws_iam_policy" "s3_get_object" {
   name        = "S3GetObjectPolicy"
   description = "Allow Lambda to get emails from S3."
-  policy      = data.aws_iam_policy_document.s3_get_object
+  policy      = data.aws_iam_policy_document.s3_get_object.json
 }
 
 resource "aws_iam_role_policy_attachment" "s3_get_object" {
@@ -234,7 +234,7 @@ data "aws_iam_policy_document" "send_raw_email" {
 resource "aws_iam_policy" "send_raw_email" {
   name        = "S3GetObjectPolicy"
   description = "Allow Lambda to get emails from S3."
-  policy      = data.aws_iam_policy_document.send_raw_email
+  policy      = data.aws_iam_policy_document.send_raw_email.json
 }
 
 resource "aws_iam_role_policy_attachment" "send_raw_email" {
