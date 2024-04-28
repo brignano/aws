@@ -149,7 +149,7 @@ data "aws_iam_policy_document" "s3_bucket" {
     condition {
       test     = "StringEquals"
       variable = "aws:Referer"
-      values = ["${data.aws_caller_identity.current.account_id}"]
+      values = [data.aws_caller_identity.current.account_id]
     }
   }
 }
@@ -259,12 +259,12 @@ resource "aws_lambda_function" "email" {
   runtime          = "python3.12"
   environment {
     variables = {
-      MailS3Bucket  = aws_s3_bucket.email.bucket
-      MailS3Prefix  = "emails"
-      MailSender    = "hi@${aws_route53_zone.default.name}"
-      MailRecipient = aws_ses_email_identity.email.email
-      Region        = data.aws_region.current.name
-      LogLevel      = "DEBUG"
+      S3_BUCKET_NAME      = aws_s3_bucket.email.bucket
+      S3_BUCKET_PREFIX    = "emails"
+      ORIGINAL_RECIPIENT  = "hi@${aws_route53_zone.default.name}"
+      FORWARD_EMAIL       = aws_ses_email_identity.email.email
+      REGION              = data.aws_region.current.name
+      LOG_LEVEL           = "DEBUG"
     }
   }
 }

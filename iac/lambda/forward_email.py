@@ -17,20 +17,20 @@ import email
 import re
 import logging
 logger = logging.getLogger('forward_email')
-logger.setLevel(os.environ['LogLevel'] or "INFO")
+logger.setLevel(os.environ['LOG_LEVEL'] or "INFO")
 
 from botocore.exceptions import ClientError
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
 
-region = os.environ['Region']
+region = os.environ['REGION']
 
 
 def get_message_from_s3(message_id):
 
-    incoming_email_bucket = os.environ['MailS3Bucket']
-    incoming_email_prefix = os.environ['MailS3Prefix']
+    incoming_email_bucket = os.environ['S3_BUCKET_NAME']
+    incoming_email_prefix = os.environ['S3_BUCKET_PREFIX']
 
     if incoming_email_prefix:
         object_path = (incoming_email_prefix + "/" + message_id)
@@ -61,18 +61,21 @@ def get_message_from_s3(message_id):
 
 
 def create_message(file_dict):
-    sender = os.environ['MailSender']
-    recipient = os.environ['MailRecipient']
+    recipient_email = os.environ['ORIGINAL_RECIPIENT']
+    forward_email = os.environ['FORWARD_EMAIL']
 
     separator = ";"
 
     # Parse the email body.
     mailobject = email.message_from_string(file_dict['file'].decode('utf-8'))
 
-    logger.info(f"Mail object: {json.dumps(mailobject, default=str)}")
+    logger.info(f"Mail object: {json.dumps(mailobject)}")
 
     # Create a new subject line.
-    subject = mailobject['Subject']
+    subject = mailobject.get('Subject')
+    sender = mailobject.get('From')
+    # Get the body from the mailobject.
+    body = mailobject.get_payload()
 
     # The body text of the email.
     body_text = ("The attached message was received from "
@@ -93,7 +96,7 @@ def create_message(file_dict):
     # Add subject, from and to lines.
     msg['Subject'] = subject
     msg['From'] = sender
-    msg['To'] = recipient
+    msg['To'] = recipient_email
 
     # Create a new MIME object.
     att = MIMEApplication(file_dict["file"], filename)
@@ -104,8 +107,8 @@ def create_message(file_dict):
 
     message = {
         "Source": sender,
-        "Destinations": recipient,
-        "Data": msg.as_string()
+        "Destinations": forward_email,
+        "Data": body
     }
 
     return message
