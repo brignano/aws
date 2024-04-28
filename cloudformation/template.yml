@@ -102,7 +102,7 @@ Resources:
             Action:
               - "logs:CreateLogGroup"
             Resource:
-              - !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}::log-group:/aws/lambda/SesForwarder:log-stream"
+              - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}::log-group:/aws/lambda/SesForwarder:log-stream"
 
 Outputs:
   TerraformCloudAssumeRoleArn:
