@@ -98,6 +98,11 @@ Resources:
             Resource:
               - !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:*"
               - !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:role:*"
+          - Effect: "Allow"
+            Action:
+              - "logs:CreateLogGroup"
+            Resource:
+              - !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}::log-group:/aws/lambda/SesForwarder"
 
 Outputs:
   TerraformCloudAssumeRoleArn:
