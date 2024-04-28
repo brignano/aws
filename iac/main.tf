@@ -261,8 +261,8 @@ resource "aws_lambda_function" "email" {
     variables = {
       MailS3Bucket  = aws_s3_bucket.email.bucket
       MailS3Prefix  = "emails"
-      MailSender    = aws_ses_email_identity.email.email
-      MailRecipient = "hi@${aws_route53_zone.default.name}"
+      MailSender    = "hi@${aws_route53_zone.default.name}"
+      MailRecipient = aws_ses_email_identity.email.email
       Region        = data.aws_region.current.name
       LogLevel      = "DEBUG"
     }
