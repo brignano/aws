@@ -52,7 +52,7 @@ def get_message_from_s3(message_id):
     file = object_s3['Body'].read()
     email = file.decode('utf-8')
     email = json.loads(email)
-    logger.info(f"Email content: {json.dumps(email)}")
+    logger.info(f"Email content: {json.dumps(file, default=str)}")
 
     file_dict = {
         "file": file,
