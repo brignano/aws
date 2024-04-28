@@ -141,6 +141,11 @@ data "aws_iam_policy_document" "s3_bucket" {
       "${aws_s3_bucket.email.arn}/emails/*"
     ]
 
+    principals {
+      type        = "Service"
+      identifiers = ["ses.amazonaws.com"]
+    }
+
     condition {
       test     = "StringEquals"
       variable = "aws:referer"
