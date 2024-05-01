@@ -74,7 +74,7 @@ def create_message(file_dict):
 
     # Get the body from the mailobject.
     body = mailobject.get_payload().rstrip()
-    logger.debug(f"Body: {json.dumps(body)}")
+    logger.debug(f"Body: {body}")
 
     # Create a multipart/mixed parent container.
     msg = MIMEMultipart('mixed')
