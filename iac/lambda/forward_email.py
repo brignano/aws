@@ -77,6 +77,8 @@ def create_message(file_dict):
     # Get the body from the mailobject.
     body = mailobject.get_payload()
 
+    logger.debug(f"Body: {json.dumps(body)}")
+
     # The body text of the email.
     body_text = ("The attached message was received from "
         + separator.join(mailobject.get_all('From'))
