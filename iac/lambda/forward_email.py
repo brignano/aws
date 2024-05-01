@@ -69,7 +69,7 @@ def create_message(file_dict):
     # Parse the email body.
     mailobject = email.message_from_string(file_dict['file'].decode('utf-8'))
 
-    # logger.info(f"Mail object: {json.dumps(mailobject)}")
+    logger.debug(f"Mail object: {json.dumps(mailobject, default=str)}")
 
     # Create a new subject line.
     subject = mailobject.get('Subject')
@@ -142,7 +142,7 @@ def send_email(message):
 
 def lambda_handler(event, context):
     # Get the unique ID of the message.This corresponds to the name of the file in S3.
-    logger.info(f"SES Records (len={len(event['Records'])}): {json.dumps(event['Records'])}")
+    logger.debug(f"SES Records (len={len(event['Records'])}): {json.dumps(event['Records'])}")
     message_id = event['Records'][0]['ses']['mail']['messageId']
     logger.debug(f"Sample SES Event: {json.dumps(event['Records'][0])}")
     logger.info(f"Forwarding message ID {message_id}")
