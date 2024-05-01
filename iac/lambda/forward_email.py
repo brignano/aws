@@ -81,7 +81,8 @@ def create_message(file_dict):
     msg['To'] = forward_to_email
     msg['From'] = from_email
     msg['Subject'] = subject
-    msg.attach(MIMEText(body.encode, 'plain', 'utf-8'))
+    # todo: add reply-to and cc/bcc
+    msg.attach(MIMEText(body, 'plain', 'utf-8'))
 
     message = {
         "Source": from_email,
