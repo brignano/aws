@@ -79,11 +79,11 @@ def create_message(file_dict):
     message = {
         "Source": from_email,
         "Destinations": forward_to_email,
-        "Data": {
+        "Data": [
             "From": from_email,
             "Subject": subject,
             "Body": body,
-        }
+        ]
     }
 
     logger.debug(f"message: {message}")
