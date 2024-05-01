@@ -78,7 +78,7 @@ def create_message(file_dict):
 
     # Create a multipart/mixed parent container.
     msg = MIMEMultipart('mixed')
-    msg['To'] = forward_to_email
+    msg['To'] = "hi@brignano.io"
     msg['From'] = from_email
     msg['Subject'] = subject
     # todo: add reply-to and cc/bcc
