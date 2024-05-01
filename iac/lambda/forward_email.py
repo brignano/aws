@@ -70,7 +70,7 @@ def create_message(file_dict):
 
     # Create a new subject line.
     subject = mailobject.get('Subject')
-    from_email = re.search(r'<([^>]+)>', mailobject.get('From')).group(1)
+    from_email = mailobject.get('From')
 
     # Get the body from the mailobject.
     body = mailobject.get_payload().rstrip()
@@ -79,7 +79,11 @@ def create_message(file_dict):
     message = {
         "Source": from_email,
         "Destinations": forward_to_email,
-        "Data": body
+        "Data": {
+            "From": from_email,
+            "Subject": subject,
+            "Body": body,
+        }
     }
 
     logger.debug(f"message: {message}")
@@ -100,7 +104,7 @@ def send_email(message):
                 message['Destinations']
             ],
             RawMessage = {
-                'Data': message['Data']
+                'Data': message['Data'].as_string()
             }
         )
 
