@@ -82,6 +82,8 @@ def create_message(file_dict):
         "Data": body
     }
 
+    logger.debug(f"message: {message}")
+
     return message
 
 
