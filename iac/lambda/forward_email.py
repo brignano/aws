@@ -76,14 +76,17 @@ def create_message(file_dict):
     body = mailobject.get_payload().rstrip()
     logger.debug(f"Body: {json.dumps(body)}")
 
+    # Create a multipart/mixed parent container.
+    msg = MIMEMultipart('mixed')
+    msg['To'] = forward_to_email
+    msg['From'] = from_email
+    msg['Subject'] = subject
+    msg.attach(MIMEText(body, 'plain').encode('utf-8'))
+
     message = {
         "Source": from_email,
         "Destinations": forward_to_email,
-        "Data": [
-            "From": from_email,
-            "Subject": subject,
-            "Body": body,
-        ]
+        "Data": msg.as_string()
     }
 
     logger.debug(f"message: {message}")
@@ -104,7 +107,7 @@ def send_email(message):
                 message['Destinations']
             ],
             RawMessage = {
-                'Data': message['Data'].as_string()
+                'Data': message['Data']
             }
         )
 
