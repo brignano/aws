@@ -61,10 +61,7 @@ def get_message_from_s3(message_id):
 
 
 def create_message(file_dict):
-    recipient_email = os.environ['ORIGINAL_RECIPIENT']
-    forward_email = os.environ['FORWARD_EMAIL']
-
-    separator = ";"
+    forward_to_email = os.environ['FORWARD_TO_EMAIL']
 
     # Parse the email body.
     mailobject = email.message_from_string(file_dict['file'].decode('utf-8'))
@@ -73,43 +70,15 @@ def create_message(file_dict):
 
     # Create a new subject line.
     subject = mailobject.get('Subject')
-    sender = mailobject.get('From')
+    from_email = re.search(r'<([^>]+)>', mailobject.get('From')).group(1)
+
     # Get the body from the mailobject.
     body = mailobject.get_payload()
-
     logger.debug(f"Body: {json.dumps(body)}")
 
-    # The body text of the email.
-    body_text = ("The attached message was received from "
-        + separator.join(mailobject.get_all('From'))
-        + ". This message is archived at " + file_dict['path'])
-
-    # The file name to use for the attached message.Uses regex to remove all
-    # non - alphanumeric characters, and appends a file extension.
-    filename = re.sub('[^0-9a-zA-Z]+', '_', subject) + ".eml"
-
-    # Create a MIME container.
-    msg = MIMEMultipart()
-    # Create a MIME text part.
-    text_part = MIMEText(body_text, _subtype = "html")
-    # Attach the text part to the MIME message.
-    msg.attach(text_part)
-
-    # Add subject, from and to lines.
-    msg['Subject'] = subject
-    msg['From'] = sender
-    msg['To'] = recipient_email
-
-    # Create a new MIME object.
-    att = MIMEApplication(file_dict["file"], filename)
-    att.add_header("Content-Disposition", 'attachment', filename = filename)
-
-    # Attach the file object to the message.
-    msg.attach(att)
-
     message = {
-        "Source": sender,
-        "Destinations": forward_email,
+        "Source": from_email,
+        "Destinations": forward_to_email,
         "Data": body
     }
 

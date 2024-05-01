@@ -273,8 +273,7 @@ resource "aws_lambda_function" "email" {
     variables = {
       S3_BUCKET_NAME      = aws_s3_bucket.email.bucket
       S3_BUCKET_PREFIX    = "emails"
-      ORIGINAL_RECIPIENT  = "hi@${aws_route53_zone.default.name}"
-      FORWARD_EMAIL       = aws_ses_email_identity.email.email
+      FORWARD_TO_EMAIL    = aws_ses_email_identity.email.email
       REGION              = data.aws_region.current.name
       LOG_LEVEL           = "DEBUG"
     }
