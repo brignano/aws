@@ -73,7 +73,7 @@ def create_message(file_dict):
     from_email = re.search(r'<([^>]+)>', mailobject.get('From')).group(1)
 
     # Get the body from the mailobject.
-    body = mailobject.get_payload()
+    body = mailobject.get_payload().rstrip()
     logger.debug(f"Body: {json.dumps(body)}")
 
     message = {
