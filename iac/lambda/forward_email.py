@@ -90,12 +90,12 @@ def create_message(file_dict):
         "Data": msg.as_string()
     }
 
-    logger.debug(f"message: {message}")
+    logger.debug(f"Message: {message}")
 
     return message
 
 
-def send_email(message):
+def send_email(message) -> None:
     # Create a new SES client.
     client_ses = boto3.client('ses', region)
 
@@ -114,26 +114,26 @@ def send_email(message):
 
     # Display an error if something goes wrong.
     except ClientError as e:
-        output = e.response['Error']['Message']
+        raise e
     else:
-        output = "Email sent! Message ID: " + response['MessageId']
-
-    return output
-
+        logger.info(f"Email sent! Message ID: {response['MessageId']}")
 
 def lambda_handler(event, context):
-    # Get the unique ID of the message.This corresponds to the name of the file in S3.
-    logger.debug(f"SES Records (len={len(event['Records'])}): {json.dumps(event['Records'])}")
-    message_id = event['Records'][0]['ses']['mail']['messageId']
-    logger.debug(f"Sample SES Event: {json.dumps(event['Records'][0])}")
-    logger.info(f"Forwarding message ID {message_id}")
+    try:
+        # Get the unique ID of the message.This corresponds to the name of the file in S3.
+        logger.debug(f"SES Records (len={len(event['Records'])}): {json.dumps(event['Records'])}")
+        message_id = event['Records'][0]['ses']['mail']['messageId']
+        logger.debug(f"Sample SES Event: {json.dumps(event['Records'][0])}")
+        logger.info(f"Forwarding message ID {message_id}")
 
-    # Retrieve the file from the S3 bucket.
-    file_dict = get_message_from_s3(message_id)
+        # Retrieve the file from the S3 bucket.
+        file_dict = get_message_from_s3(message_id)
 
-    # Create the message.
-    message = create_message(file_dict)
+        # Create the message.
+        message = create_message(file_dict)
 
-    # Send the email and log the result.
-    result = send_email(message)
-    logger.info(result)
+        # Send the email and log the result.
+        send_email(message)
+    except Exception as e:
+        logger.error(str(e))
+        raise e
