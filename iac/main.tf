@@ -338,5 +338,5 @@ resource "aws_lambda_permission" "email" {
   function_name  = aws_lambda_function.email.function_name
   principal      = "ses.amazonaws.com"
   source_account = data.aws_caller_identity.current.account_id
-  source_arn     = aws_ses_receipt_rule.forward.arn
+  # source_arn     = aws_ses_receipt_rule.forward.arn
 }
