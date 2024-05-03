@@ -320,6 +320,7 @@ resource "aws_ses_receipt_rule" "archive" {
 
 resource "aws_ses_receipt_rule" "forward" {
   name          = "forward"
+  depends_on    = [ aws_lambda_function.email ]
   rule_set_name = aws_ses_receipt_rule_set.primary.rule_set_name
   recipients    = ["hi@${aws_route53_zone.default.name}"]
   enabled       = true
