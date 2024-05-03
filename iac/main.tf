@@ -275,7 +275,7 @@ resource "aws_lambda_function" "email" {
       S3_BUCKET_PREFIX    = "emails"
       FORWARD_TO_EMAIL    = aws_ses_email_identity.email.email
       REGION              = data.aws_region.current.name
-      LOG_LEVEL           = "INFO"
+      LOG_LEVEL           = local.log_level
     }
   }
 }
