@@ -167,7 +167,7 @@ data "aws_iam_policy_document" "s3_bucket" {
 }
 
 resource "aws_iam_role" "email" {
-  name               = "LambdaSesForwarderRole"
+  name               = "LambdaAssumeRole"
   assume_role_policy = data.aws_iam_policy_document.assume_role_policy.json
 }
 
@@ -261,11 +261,10 @@ resource "aws_iam_role_policy_attachment" "send_raw_email" {
 
 resource "aws_lambda_function" "email" {
   filename      = data.archive_file.email.output_path
-  function_name = "SesForwarder" # todo: "email-forwarder"
+  function_name = "email-forwarder"
   role          = aws_iam_role.email.arn
   handler       = "forward_email.lambda_handler"
   timeout       = 30
-  tags          = {}
 
   source_code_hash = data.archive_file.email.output_base64sha256
   runtime          = "python3.12"
