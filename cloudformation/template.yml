@@ -70,6 +70,7 @@ Resources:
               - "ses:Create*"
               - "ses:Describe*"
               - "ses:Update*"
+              - "ses:Delete*"
             # todo: limit access here
             Resource: "*"
           - Effect: "Allow"
