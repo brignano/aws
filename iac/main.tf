@@ -318,20 +318,19 @@ resource "aws_ses_receipt_rule" "archive" {
   }
 }
 
-resource "aws_ses_receipt_rule" "forward" {
-  name          = "forward"
-  depends_on    = [aws_lambda_permission.email]
-  rule_set_name = aws_ses_receipt_rule_set.primary.rule_set_name
-  recipients    = ["hi@${aws_route53_zone.default.name}"]
-  enabled       = true
-  scan_enabled  = true
+# resource "aws_ses_receipt_rule" "forward" {
+#   name          = "forward"
+#   rule_set_name = aws_ses_receipt_rule_set.primary.rule_set_name
+#   recipients    = ["hi@${aws_route53_zone.default.name}"]
+#   enabled       = true
+#   scan_enabled  = true
 
-  lambda_action {
-    position        = 1
-    function_arn    = aws_lambda_function.email.arn
-    invocation_type = "Event"
-  }
-}
+#   lambda_action {
+#     position        = 1
+#     function_arn    = aws_lambda_function.email.arn
+#     invocation_type = "Event"
+#   }
+# }
 
 resource "aws_lambda_permission" "email" {
   statement_id   = "AllowExecutionFromSES"
