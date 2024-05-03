@@ -122,7 +122,7 @@ resource "aws_ses_email_identity" "email" {
 }
 
 resource "aws_s3_bucket" "email" {
-  bucket = "${aws_route53_zone.default.name}-email-bucket"
+  bucket = "${aws_route53_zone.default.name}-emails"
 }
 
 resource "aws_s3_bucket_ownership_controls" "email" {
