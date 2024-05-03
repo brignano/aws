@@ -96,6 +96,7 @@ Resources:
               - "lambda:Delete*"
               - "lambda:Tag*"
               - "lambda:Add*"
+              - "lambda:Remove*"
             Resource:
               - !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:*"
               - !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:role:*"
