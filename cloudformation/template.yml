@@ -61,7 +61,7 @@ Resources:
             Resource:
               - "arn:aws:s3:::www.anthonybrignano.com"
               - "arn:aws:s3:::anthonybrignano.com"
-              - "arn:aws:s3:::brignano.io-email-bucket"
+              - "arn:aws:s3:::brignano.io-emails"
           - Effect: "Allow"
             Action:
               - "ses:Describe*"
