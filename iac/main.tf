@@ -305,6 +305,7 @@ resource "aws_ses_receipt_rule" "noreply" {
 
 resource "aws_ses_receipt_rule" "archive" {
   name          = "archive"
+  depends_on    = [ aws_s3_bucket.email ]
   rule_set_name = aws_ses_receipt_rule_set.primary.rule_set_name
   recipients    = ["hi@${aws_route53_zone.default.name}"]
   enabled       = true
