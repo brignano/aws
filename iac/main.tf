@@ -9,7 +9,6 @@ resource "aws_route53_zone" "default" {
   }
 }
 
-# todo: remove below resource
 resource "aws_route53_record" "default" {
   zone_id = aws_route53_zone.default.zone_id
   name    = aws_route53_zone.default.name
@@ -43,13 +42,10 @@ resource "aws_route53_zone" "backup" {
 
 resource "aws_route53_record" "backup" {
   zone_id = aws_route53_zone.backup.zone_id
-  name    = local.domain_name.backup
+  name    = aws_route53_zone.backup.name
   type    = "A"
-  alias {
-    name                   = aws_s3_bucket_website_configuration.redirect.website_domain
-    zone_id                = aws_s3_bucket.redirect.hosted_zone_id
-    evaluate_target_health = false
-  }
+  ttl     = 300
+  records = [local.vercel_ip_address]
 }
 
 resource "aws_route53_record" "backup_www" {
@@ -60,30 +56,6 @@ resource "aws_route53_record" "backup_www" {
     name                   = local.domain_name.backup
     zone_id                = aws_route53_zone.backup.zone_id
     evaluate_target_health = false
-  }
-}
-
-resource "aws_s3_bucket" "redirect" {
-  bucket = local.domain_name.backup
-}
-
-resource "aws_s3_bucket_website_configuration" "redirect" {
-  bucket = aws_s3_bucket.redirect.bucket
-  redirect_all_requests_to {
-    host_name = aws_route53_zone.default.name
-    protocol  = "https"
-  }
-}
-
-resource "aws_s3_bucket" "redirect_www" {
-  bucket = "www.${local.domain_name.backup}"
-}
-
-resource "aws_s3_bucket_website_configuration" "redirect_www" {
-  bucket = aws_s3_bucket.redirect_www.bucket
-  redirect_all_requests_to {
-    host_name = aws_route53_zone.default.name
-    protocol  = "https"
   }
 }
 
