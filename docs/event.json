@@ -1,0 +1,156 @@
+{
+    "eventSource": "aws:ses",
+    "eventVersion": "1.0",
+    "ses": {
+        "mail": {
+            "timestamp": "2024-04-15T11:18:43.477Z",
+            "source": "m-ii74bv1e85cy7bgruc8sqwnte7zf7zvp2xy0tb669im5456hwm9@bounce.linkedin.com",
+            "messageId": "0lkt65uou7vobo3tbbi5dntfnpfur0pj6tjvbio1",
+            "destination": [
+                "hi@brignano.io"
+            ],
+            "headersTruncated": false,
+            "headers": [
+                {
+                    "name": "Return-Path",
+                    "value": "<m-ii74bv1e85cy7bgruc8sqwnte7zf7zvp2xy0tb669im5456hwm9@bounce.linkedin.com>"
+                },
+                {
+                    "name": "Received",
+                    "value": "from maild-hd.linkedin.com (maild-hd.linkedin.com [108.174.0.188]) by inbound-smtp.us-east-1.amazonaws.com with SMTP id 0lkt65uou7vobo3tbbi5dntfnpfur0pj6tjvbio1 for hi@brignano.io; Mon, 15 Apr 2024 11:18:43 +0000 (UTC)"
+                },
+                {
+                    "name": "X-SES-Spam-Verdict",
+                    "value": "PASS"
+                },
+                {
+                    "name": "X-SES-Virus-Verdict",
+                    "value": "PASS"
+                },
+                {
+                    "name": "Received-SPF",
+                    "value": "pass (spfCheck: domain of _spf.linkedin.com designates 108.174.0.188 as permitted sender) client-ip=108.174.0.188; envelope-from=m-ii74bv1e85cy7bgruc8sqwnte7zf7zvp2xy0tb669im5456hwm9@bounce.linkedin.com; helo=maild-hd.linkedin.com;"
+                },
+                {
+                    "name": "Authentication-Results",
+                    "value": "amazonses.com; spf=pass (spfCheck: domain of _spf.linkedin.com designates 108.174.0.188 as permitted sender) client-ip=108.174.0.188; envelope-from=m-ii74bv1e85cy7bgruc8sqwnte7zf7zvp2xy0tb669im5456hwm9@bounce.linkedin.com; helo=maild-hd.linkedin.com; dkim=pass header.i=@linkedin.com; dkim=pass header.i=@maild.linkedin.com; dmarc=pass header.from=linkedin.com;"
+                },
+                {
+                    "name": "X-SES-RECEIPT",
+                    "value": "AEFBQUFBQUFBQUFHSGVramh0RE9rOVBNTVRCMW5JVHZzRTBtY3ZXVVgyQVJkWWExMzlFOUxqaUNMcXpXRmsvVlBaY2tyMFYxQVJMd0Q4bHlxVER2WHpDeEV6NWxkY2lCdWRVNXppYXBnZG5ESEN1a3ZiSHd6NkkzWnFmczNGZWdZWTNLL2E1Y1R1TW10Z0t6bm04SlhLd2Z5Z1FMcmxnVVZFMUtncVRIR1BDSHNWNEFvL2cwUUlSNGFUYm1BYVlaWHY1TTdYUWZkQ05xb0JVeVlZU1paNGxNNDFSUVdQVEVvbWJQUE9HUTV6c3ptdHRuRXAzR3VjdVJLMitEQTBHcUdtc3UrdWN4WkE3L2JIMUN4dEJ5MGU4MUdmb3QzRWZCV29CclpLckRwZER3emdwdkJia2YrSHV3WU1TTm9sM0hVL2pUY21KTWRWODNUNEU0MjErVjRyYW9Eb1pXLy9kMzlNQnlXeU55V2RmN0lFa1lOampTY293PT0="
+                },
+                {
+                    "name": "X-SES-DKIM-SIGNATURE",
+                    "value": "a=rsa-sha256; q=dns/txt; b=co+E8zYPUKx95r+BK1dr75JkskJuauWDw1jm1uMRjKPyKhJ002cfzFM65mzA0KYLYS5EH/O/fEIopToKZQn9SWvfSjt8HezJmkvCneTQ7/kWVYhLdxj18eqNYsAHIy7+2s23Tauzj8L/qNy5YDgj1Sf2nMCjgeYmc7NFsXq85E0=; c=relaxed/simple; s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1713179924; v=1; bh=meKNWqrW/KTefotoJbOmYgqP6jJHJlNJyeaETc302QM=; h=From:To:Cc:Bcc:Subject:Date:Message-ID:MIME-Version:Content-Type:X-SES-RECEIPT;"
+                },
+                {
+                    "name": "DKIM-Signature",
+                    "value": "v=1; a=rsa-sha256; c=relaxed/relaxed; d=maild.linkedin.com; s=d2048-202308-0d; t=1713179922; bh=oDiCwSYOiU+MkSdjBoV7539DP57t5JRwsvkmXsbQ2NI=; h=From:Subject:MIME-Version:Content-Type:To:Date:X-LinkedIn-Class:X-LinkedIn-Template:X-LinkedIn-fbl; b=MVgIcqwByltOEa1+JkiEX705f62pUc5rQ5EbxsA0jNgxLpFKtEZ+pt40DAWnZzYE31LiDYHKG5AQZ2t7Dfp9QnudvulyzdBCM7JpyMbnfUn6dkdLQyvlGBtPf/tUVMMzcYYdrSlQMupKs/jtlkkpu2HqSBHPw23xoJ1Z7LS4LWS22R9FjGfN/La39D59Kp462aReFXsLmFFg+3+3D0lt7D6r5/XqifdmEGAwvswLTdL/MAV43FzIuDtrAAOsXG5WFuEzojhfaXlFkWpwSFanByCotDmkRCm1Y0sA31luQnsR1uVqjiOEINnV/gj8ZsJjwD/eMVzNp9F0a8rgPle4Jg=="
+                },
+                {
+                    "name": "DKIM-Signature",
+                    "value": "v=1; a=rsa-sha256; c=relaxed/relaxed; d=linkedin.com; s=d2048-202308-00; t=1713179922; bh=oDiCwSYOiU+MkSdjBoV7539DP57t5JRwsvkmXsbQ2NI=; h=From:Subject:MIME-Version:Content-Type:To:Date:X-LinkedIn-Class:X-LinkedIn-Template:X-LinkedIn-fbl; b=E2zolHvYLE6H8dVlRK2NNJ9fiwYpeDWnzHxBMNeGOillsPXcKGXchB8qHBB347Ycee3B+vetoPKG618exZlYZ149iUPCbecl5jdSQ3Nvj94J8uT4UcncGVG7itNYbg+1j83zaQKyJl458Qy4BZsIKdRgyTZcAMP+kkXAnVDwhHy1XjpTZvWQvCyqtp37fMpXVv4LbxxKBl5tUeYMLVQFw17F56iKBjIghHhQsTkj46FK+s1l/xc93TvU3OPrzgUjq+SVVN3k5VgKOIUJ5TSBhyntYL+MdYCa6yZfeAkDWxggv94F0e2TROj30UjeHhJyk+UV4l6Nple94EZ1ukntKw=="
+                },
+                {
+                    "name": "From",
+                    "value": "\"John (via LinkedIn)\" <messages-noreply@linkedin.com>"
+                },
+                {
+                    "name": "Message-ID",
+                    "value": "<1625661426.12029625.1713179921913@ltx1-app54198.prod.linkedin.com>"
+                },
+                {
+                    "name": "Subject",
+                    "value": "I still want to connect"
+                },
+                {
+                    "name": "MIME-Version",
+                    "value": "1.0"
+                },
+                {
+                    "name": "Content-Type",
+                    "value": "multipart/alternative;  boundary=\"----=_Part_12029623_1055120907.1713179921908\""
+                },
+                {
+                    "name": "To",
+                    "value": "Anthony Brignano <hi@brignano.io>"
+                },
+                {
+                    "name": "Date",
+                    "value": "Mon, 15 Apr 2024 11:18:41 +0000 (UTC)"
+                },
+                {
+                    "name": "X-LinkedIn-Class",
+                    "value": "INVITE-REMIND-MEMBER"
+                },
+                {
+                    "name": "X-LinkedIn-Template",
+                    "value": "email_m2m_invite_reminder_02"
+                },
+                {
+                    "name": "X-LinkedIn-fbl",
+                    "value": "m2-at00o6tjdm38rklht0fibysyl9cevowukgby7erwmfbpnu7tg2fp0n3bgtc0dwtvz44bfvi92jxixgfiottgault25t7n7i8qw6e0o"
+                },
+                {
+                    "name": "X-LinkedIn-Id",
+                    "value": "4d03xo-lv0uvl4y-9a"
+                },
+                {
+                    "name": "List-Unsubscribe",
+                    "value": "<https://www.linkedin.com/comm/psettings/email-unsubscribe?lipi=urn%3Ali%3Apage%3Aemail_email_m2m_invite_reminder_02%3BocpuBqByRJSp4VHFc4JY5A%3D%3D&midToken=AQHrPOdGD1j0KA&midSig=1T33_SIOoCHXc1&trk=eml-email_m2m_invite_reminder_02-unsub-0-unsub&trkEmail=eml-email_m2m_invite_reminder_02-unsub-0-unsub-null-4d03xo~lv0uvl4y~9a-null-null&eid=4d03xo-lv0uvl4y-9a&loid=AQEHZXDhHzVBugAAAY7hewrP0Rs0o50zFBdFxuLnXTGmQFO7E1TZkzfK7_wD1ZS_eHcuWM2ptHqJD83Q_aRKIg>"
+                },
+                {
+                    "name": "List-Unsubscribe-Post",
+                    "value": "List-Unsubscribe=One-Click"
+                },
+                {
+                    "name": "Feedback-ID",
+                    "value": "email_m2m_invite_reminder_02:linkedin"
+                },
+                {
+                    "name": "Require-Recipient-Valid-Since",
+                    "value": "hi@brignano.io; Sun, 13 Dec 2020 00:20:13 +0000"
+                }
+            ],
+            "commonHeaders": {
+                "returnPath": "m-ii74bv1e85cy7bgruc8sqwnte7zf7zvp2xy0tb669im5456hwm9@bounce.linkedin.com",
+                "from": [
+                    "\"John (via LinkedIn)\" <messages-noreply@linkedin.com>"
+                ],
+                "date": "Mon, 15 Apr 2024 11:18:41 +0000 (UTC)",
+                "to": [
+                    "Anthony Brignano <hi@brignano.io>"
+                ],
+                "messageId": "<1625661426.12029625.1713179921913@ltx1-app54198.prod.linkedin.com>",
+                "subject": "I still want to connect"
+            }
+        },
+        "receipt": {
+            "timestamp": "2024-04-15T11:18:43.477Z",
+            "processingTimeMillis": 1312,
+            "recipients": [
+                "hi@brignano.io"
+            ],
+            "spamVerdict": {
+                "status": "PASS"
+            },
+            "virusVerdict": {
+                "status": "PASS"
+            },
+            "spfVerdict": {
+                "status": "PASS"
+            },
+            "dkimVerdict": {
+                "status": "PASS"
+            },
+            "dmarcVerdict": {
+                "status": "PASS"
+            },
+            "action": {
+                "type": "Lambda",
+                "functionArn": "arn:aws:lambda:us-east-1:549188633263:function:SesForwarder",
+                "invocationType": "Event"
+            }
+        }
+    }
+}
