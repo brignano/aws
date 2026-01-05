@@ -11,7 +11,7 @@ resource "aws_route53_zone" "default" {
 
 resource "aws_route53_record" "default" {
   zone_id = aws_route53_zone.default.zone_id
-  name    = "@"
+  name    = aws_route53_zone.default.name
   type    = "A"
   ttl     = 300
   records = [local.vercel_ip_address]
@@ -42,7 +42,7 @@ resource "aws_route53_zone" "backup" {
 
 resource "aws_route53_record" "backup" {
   zone_id = aws_route53_zone.backup.zone_id
-  name    = "@"
+  name    = aws_route53_zone.backup.name
   type    = "A"
   ttl     = 300
   records = [local.vercel_ip_address]
