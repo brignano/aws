@@ -51,13 +51,10 @@ resource "aws_route53_record" "backup" {
 resource "aws_route53_record" "backup_www" {
   zone_id = aws_route53_zone.backup.zone_id
   name    = "www.${local.domain_name.backup}"
-  type    = "A"
+  type    = "CNAME"
+  ttl     = 300
+  records = [local.vercel_cname_record]
 
-  alias {
-    name                   = local.domain_name.backup
-    zone_id                = aws_route53_zone.backup.zone_id
-    evaluate_target_health = false
-  }
 }
 
 ################
