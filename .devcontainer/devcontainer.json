@@ -3,7 +3,7 @@
   "image": "mcr.microsoft.com/vscode/devcontainers/base:1",
   "features": {
     "ghcr.io/devcontainers/features/terraform:1": {
-      "terraform_version": "1.5.7"
+      "terraform_version": "1.7.5"
     },
     "ghcr.io/devcontainers/features/aws-cli:1": {}
   },
