@@ -1,6 +1,8 @@
-.env.local
+.env*
+!.env.example
 terraform.tfvars
 .terraform
 iac/work/
 .DS_Store
 .venv
+*.zip
