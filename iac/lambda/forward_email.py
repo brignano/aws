@@ -115,7 +115,8 @@ def create_message(file_dict):
     Note:
         - Preserves original sender and subject
         - Sets To: header to hi@brignano.io
-        - Currently does not preserve Reply-To, CC, or BCC headers (see TODO below)
+        - Extracts and logs Reply-To, CC, and BCC headers for debugging
+        - Does not currently forward Reply-To, CC, or BCC headers (see TODO below)
     """
     forward_to_email = os.environ['FORWARD_TO_EMAIL']
 
@@ -124,9 +125,21 @@ def create_message(file_dict):
 
     logger.debug(f"Mail object: {json.dumps(mailobject, default=str)}")
 
-    # Create a new subject line.
+    # Extract email headers
     subject = mailobject.get('Subject')
     from_email = mailobject.get('From')
+    reply_to = mailobject.get('Reply-To')
+    cc = mailobject.get('Cc')
+    bcc = mailobject.get('Bcc')
+    
+    # Log extracted headers for debugging and future implementation
+    logger.info(f"Email headers - From: {from_email}, Subject: {subject}")
+    if reply_to:
+        logger.info(f"Reply-To header found: {reply_to}")
+    if cc:
+        logger.info(f"CC header found: {cc}")
+    if bcc:
+        logger.info(f"BCC header found: {bcc}")
 
     # Get the body from the mailobject.
     body = mailobject.get_payload().rstrip()
@@ -139,6 +152,7 @@ def create_message(file_dict):
     msg['Subject'] = subject
     # TODO: Preserve and forward Reply-To, CC, and BCC headers from original email
     # This would allow replying directly to original sender and maintaining email threads
+    # Headers are now extracted and logged above for future implementation
     msg.attach(MIMEText(body, 'plain', 'utf-8'))
 
     message = {
