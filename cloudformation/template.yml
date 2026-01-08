@@ -71,7 +71,9 @@ Resources:
               - "ses:Describe*"
               - "ses:Update*"
               - "ses:Delete*"
-            # todo: limit access here
+            # TODO: Limit SES access to specific domain identities and receipt rule sets
+            # Currently uses wildcard resource (*) for flexibility during development
+            # Recommended: Scope to arn:aws:ses:${AWS::Region}:${AWS::AccountId}:identity/brignano.io
             Resource: "*"
           - Effect: "Allow"
             Action:

@@ -265,6 +265,27 @@ Emails sent to `noreply@brignano.io` are automatically rejected with:
 - Status Code: 5.1.1
 - Message: "Mailbox does not exist"
 
+## Terraform State Management
+
+### Importing Existing Resources
+
+If you encounter errors like "resource already exists", you need to import the existing AWS resource into Terraform state.
+
+**Common Error:**
+```
+Error: creating Route 53 Record: InvalidChangeBatch: [Tried to create resource record set [name='www.anthonybrignano.com.', type='CNAME'] but it already exists]
+```
+
+**Solution:**
+See the detailed import guide at [`../docs/terraform-import.md`](../docs/terraform-import.md) for step-by-step instructions.
+
+**Quick Import Command:**
+```bash
+terraform import aws_route53_record.backup_www <ZONE_ID>_www.anthonybrignano.com_CNAME
+```
+
+Replace `<ZONE_ID>` with your actual Route 53 hosted zone ID (e.g., `Z03941761P902ZZ5Z2ZNA`).
+
 ## Monitoring and Troubleshooting
 
 ### CloudWatch Logs
