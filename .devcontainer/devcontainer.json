@@ -4,7 +4,8 @@
   "features": {
     "ghcr.io/devcontainers/features/terraform:1": {
       "terraform_version": "1.5.7"
-    }
+    },
+    "ghcr.io/devcontainers/features/aws-cli:1": {}
   },
   "remoteUser": "vscode"
 }
