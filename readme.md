@@ -70,8 +70,6 @@ Internet → Route 53 → Vercel (Website)
 - **No-Reply Handling:** Emails to noreply@brignano.io are automatically bounced
 
 ### 3. Infrastructure as Code
-
-### 3. Infrastructure as Code
 - **Terraform** manages all AWS resources
 - **Version Control** for infrastructure changes
 - **CI/CD** via GitHub Actions and Terraform Cloud
@@ -318,10 +316,6 @@ Terraform configuration for:
 - **S3**: Email storage bucket for archiving incoming messages
 - **IAM**: Roles and policies for Lambda to access S3 and send emails via SES
 - **CloudWatch**: Logging for Lambda execution
-
-### CloudFormation Folder (Legacy Documentation)
-
-*Note: This section is maintained for backward compatibility. See [cloudformation/README.md](cloudformation/README.md) for current documentation.*
 
 ### CloudFormation Folder (Legacy Documentation)
 
