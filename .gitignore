@@ -6,3 +6,6 @@ iac/work/
 .DS_Store
 .venv
 *.zip
+__pycache__/
+*.py[cod]
+*$py.class
