@@ -125,7 +125,7 @@ def create_message(file_dict):
 
     logger.debug(f"Mail object: {json.dumps(mailobject, default=str)}")
 
-    # Extract email headers
+    # Extract email headers for logging and future forwarding implementation
     subject = mailobject.get('Subject')
     from_email = mailobject.get('From')
     reply_to = mailobject.get('Reply-To')
@@ -139,7 +139,8 @@ def create_message(file_dict):
     if cc:
         logger.info(f"CC header found: {cc}")
     if bcc:
-        logger.info(f"BCC header found: {bcc}")
+        # BCC is sensitive information, log at debug level only
+        logger.debug(f"BCC header found: {bcc}")
 
     # Get the body from the mailobject.
     body = mailobject.get_payload().rstrip()
