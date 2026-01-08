@@ -152,8 +152,13 @@ The `TerraformCloudAssumePolicy` grants the following permissions:
   - `anthonybrignano.com`
 
 ### SES (Email)
-- Describe, Get, Set, Create, Update, Delete operations
-- **Note:** Currently has broad `*` resource access (TODO: limit this)
+- Full management permissions for SES resources
+- Scoped to specific resources:
+  - Domain identity: `brignano.io`
+  - Email identities under `@brignano.io`
+  - Any email identities (for forwarding destinations)
+  - Receipt rule set: `default-rule-set`
+  - Configuration sets
 
 ### Lambda (Functions)
 - Create, Update, Delete, Tag functions
@@ -180,15 +185,14 @@ The `TerraformCloudAssumePolicy` grants the following permissions:
 
 1. **No Long-Term Credentials:** Uses temporary tokens via OIDC
 2. **Scoped Access:** Role limited to specific organization and workspaces
-3. **Resource Restrictions:** Most permissions limited to specific resources
+3. **Resource Restrictions:** Permissions limited to specific resources (Route 53 zones, S3 buckets, SES identities)
 4. **Audit Trail:** CloudTrail logs all assume role operations
 
-### ⚠️ TODO: Security Improvements
+### Best Practices
 
-1. **SES Permissions:** Currently uses `Resource: "*"` - should be scoped to specific identities
-2. **Policy Review:** Regularly review and minimize granted permissions
-3. **Monitoring:** Add CloudWatch alarms for unusual assume role activity
-4. **Thumbprint Updates:** OIDC thumbprint may need periodic updates
+1. **Policy Review:** Regularly review and minimize granted permissions
+2. **Monitoring:** Add CloudWatch alarms for unusual assume role activity
+3. **Thumbprint Updates:** OIDC thumbprint may need periodic updates
 
 ### Principle of Least Privilege
 
