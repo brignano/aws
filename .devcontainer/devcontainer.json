@@ -1,8 +1,11 @@
 {
-  "image": "mcr.microsoft.com/devcontainers/universal:2",
+  "name": "Dev Container with Terraform",
+  "image": "mcr.microsoft.com/vscode/devcontainers/base:1",
   "features": {
-    "ghcr.io/customink/codespaces-features/sam-cli:1": {},
-    "ghcr.io/devcontainers/features/terraform:1": {},
+    "ghcr.io/devcontainers/features/terraform:1": {
+      "terraform_version": "1.7.5"
+    },
     "ghcr.io/devcontainers/features/aws-cli:1": {}
-  }
+  },
+  "remoteUser": "vscode"
 }
