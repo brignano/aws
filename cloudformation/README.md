@@ -156,7 +156,7 @@ The `TerraformCloudAssumePolicy` grants the following permissions:
 - Scoped to specific resources:
   - Domain identity: `brignano.io`
   - Email identities under `@brignano.io`
-  - Any email identities (for forwarding destinations)
+  - Forwarding destination email: `anthonybrignano@gmail.com`
   - Receipt rule set: `default-rule-set`
   - Configuration sets
 

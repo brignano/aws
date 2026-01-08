@@ -73,7 +73,7 @@ Resources:
             Resource:
               - !Sub "arn:aws:ses:${AWS::Region}:${AWS::AccountId}:identity/brignano.io"
               - !Sub "arn:aws:ses:${AWS::Region}:${AWS::AccountId}:identity/*@brignano.io"
-              - !Sub "arn:aws:ses:${AWS::Region}:${AWS::AccountId}:identity/*"
+              - !Sub "arn:aws:ses:${AWS::Region}:${AWS::AccountId}:identity/anthonybrignano@gmail.com"
               - !Sub "arn:aws:ses:${AWS::Region}:${AWS::AccountId}:receipt-rule-set/default-rule-set"
               - !Sub "arn:aws:ses:${AWS::Region}:${AWS::AccountId}:configuration-set/*"
           - Effect: "Allow"
