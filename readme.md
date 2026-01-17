@@ -61,7 +61,10 @@ Internet → Route 53 → Vercel (Website)
 - **Primary Domain:** brignano.io → Points to Vercel hosting
 - **Backup Domain:** anthonybrignano.com → Also points to Vercel
 - **DNS Provider:** AWS Route 53 for reliable DNS resolution
-- **WWW Redirect:** Both domains support www. subdomain
+- **Subdomains:**
+  - www.brignano.io → Alias to brignano.io
+  - resume.brignano.io → Points to Vercel hosting (separate deployment)
+  - www.anthonybrignano.com → Points to Vercel hosting
 
 ### 2. Email Forwarding
 - **Receive Email:** hi@brignano.io
