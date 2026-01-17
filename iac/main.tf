@@ -99,9 +99,9 @@ resource "aws_cloudfront_distribution" "default" {
     }
   }
 
-  # Resume origin - Vercel resume deployment
+  # Resume origin - Vercel resume deployment via resume.brignano.io subdomain
   origin {
-    domain_name = local.vercel_cname_record_resume
+    domain_name = "resume.${local.domain_name.default}"
     origin_id   = "resume-origin"
 
     custom_origin_config {
@@ -109,6 +109,11 @@ resource "aws_cloudfront_distribution" "default" {
       https_port             = 443
       origin_protocol_policy = "https-only"
       origin_ssl_protocols   = ["TLSv1.2"]
+    }
+
+    custom_header {
+      name  = "X-Forwarded-Host"
+      value = local.domain_name.default
     }
   }
 
@@ -137,26 +142,25 @@ resource "aws_cloudfront_distribution" "default" {
 
   # Cache behavior for /resume/* - resume origin
   ordered_cache_behavior {
-    path_pattern     = "/resume/*"
-    allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
-    cached_methods   = ["GET", "HEAD"]
-    target_origin_id = "resume-origin"
+    path_pattern           = "resume/*"
+    allowed_methods        = ["GET", "HEAD", "OPTIONS"]
+    cached_methods         = ["GET", "HEAD"]
+    target_origin_id       = "resume-origin"
+    viewer_protocol_policy = "redirect-to-https"
+    compress               = true
 
     forwarded_values {
       query_string = true
-      headers      = ["Host", "Origin", "Referer"]
+      headers      = ["Origin", "Referer", "User-Agent"]
 
       cookies {
-        forward = "all"
+        forward = "none"
       }
     }
 
-    viewer_protocol_policy = "redirect-to-https"
-    # Zero TTL to pass through to Vercel's caching (CloudFront acts as proxy)
     min_ttl     = 0
-    default_ttl = 0
-    max_ttl     = 0
-    compress    = true
+    default_ttl = 300
+    max_ttl     = 86400
   }
 
   restrictions {
