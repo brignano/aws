@@ -64,21 +64,13 @@ Resources:
               - "arn:aws:s3:::brignano.io-emails"
           - Effect: "Allow"
             Action:
-              - "ses:GetIdentityVerificationAttributes"
-              - "ses:DescribeReceiptRuleSet"
-            Resource: "*"
-          - Effect: "Allow"
-            Action:
               - "ses:Describe*"
               - "ses:Get*"
               - "ses:Set*"
               - "ses:Create*"
               - "ses:Update*"
               - "ses:Delete*"
-            Resource:
-              - !Sub "arn:aws:ses:${AWS::Region}:${AWS::AccountId}:identity/brignano.io"
-              - !Sub "arn:aws:ses:${AWS::Region}:${AWS::AccountId}:identity/anthonybrignano@gmail.com"
-              - !Sub "arn:aws:ses:${AWS::Region}:${AWS::AccountId}:receipt-rule-set/default-rule-set"
+            Resource: "*"
           - Effect: "Allow"
             Action:
               - "iam:List*"
