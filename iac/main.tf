@@ -13,12 +13,8 @@ resource "aws_route53_record" "default" {
   zone_id = aws_route53_zone.default.zone_id
   name    = aws_route53_zone.default.name
   type    = "A"
-
-  alias {
-    name                   = aws_cloudfront_distribution.default.domain_name
-    zone_id                = aws_cloudfront_distribution.default.hosted_zone_id
-    evaluate_target_health = false
-  }
+  ttl     = 300
+  records = [local.vercel_ip_address]
 }
 
 resource "aws_route53_record" "default_www" {
@@ -39,141 +35,6 @@ resource "aws_route53_record" "resume" {
   type    = "CNAME"
   ttl     = 300
   records = [local.vercel_cname_record_resume]
-}
-
-##############
-# CloudFront #
-##############
-
-# ACM certificate must be in us-east-1 for CloudFront (provider is configured for us-east-1)
-resource "aws_acm_certificate" "default" {
-  domain_name               = local.domain_name.default
-  validation_method         = "DNS"
-  subject_alternative_names = ["www.${local.domain_name.default}"]
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
-resource "aws_route53_record" "cert_validation" {
-  for_each = {
-    for dvo in aws_acm_certificate.default.domain_validation_options : dvo.domain_name => {
-      name   = dvo.resource_record_name
-      record = dvo.resource_record_value
-      type   = dvo.resource_record_type
-    }
-  }
-
-  allow_overwrite = true
-  name            = each.value.name
-  records         = [each.value.record]
-  ttl             = 60
-  type            = each.value.type
-  zone_id         = aws_route53_zone.default.zone_id
-}
-
-resource "aws_acm_certificate_validation" "default" {
-  certificate_arn         = aws_acm_certificate.default.arn
-  validation_record_fqdns = [for record in aws_route53_record.cert_validation : record.fqdn]
-}
-
-resource "aws_cloudfront_distribution" "default" {
-  enabled         = true
-  is_ipv6_enabled = true
-  comment         = "brignano.io distribution"
-  # Empty string allows Vercel to handle routing (SPAs, dynamic routes, etc.)
-  default_root_object = ""
-  aliases             = [local.domain_name.default, "www.${local.domain_name.default}"]
-
-  # Main origin - Vercel deployment
-  origin {
-    domain_name = local.vercel_cname_record
-    origin_id   = "main-origin"
-
-    custom_origin_config {
-      http_port              = 80
-      https_port             = 443
-      origin_protocol_policy = "https-only"
-      origin_ssl_protocols   = ["TLSv1.2"]
-    }
-  }
-
-  # Resume origin - Vercel resume deployment via resume.brignano.io subdomain
-  origin {
-    domain_name = "resume.${local.domain_name.default}"
-    origin_id   = "resume-origin"
-
-    custom_origin_config {
-      http_port              = 80
-      https_port             = 443
-      origin_protocol_policy = "https-only"
-      origin_ssl_protocols   = ["TLSv1.2"]
-    }
-
-    custom_header {
-      name  = "X-Forwarded-Host"
-      value = local.domain_name.default
-    }
-  }
-
-  # Default cache behavior - main origin
-  default_cache_behavior {
-    allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
-    cached_methods   = ["GET", "HEAD"]
-    target_origin_id = "main-origin"
-
-    forwarded_values {
-      query_string = true
-      headers      = ["Host", "Origin", "Referer"]
-
-      cookies {
-        forward = "all"
-      }
-    }
-
-    viewer_protocol_policy = "redirect-to-https"
-    # Zero TTL to pass through to Vercel's caching (CloudFront acts as proxy)
-    min_ttl     = 0
-    default_ttl = 0
-    max_ttl     = 0
-    compress    = true
-  }
-
-  # Cache behavior for /resume/* - resume origin
-  ordered_cache_behavior {
-    path_pattern           = "resume/*"
-    allowed_methods        = ["GET", "HEAD", "OPTIONS"]
-    cached_methods         = ["GET", "HEAD"]
-    target_origin_id       = "resume-origin"
-    viewer_protocol_policy = "redirect-to-https"
-    compress               = true
-
-    forwarded_values {
-      query_string = true
-      headers      = ["Origin", "Referer", "User-Agent"]
-
-      cookies {
-        forward = "none"
-      }
-    }
-
-    min_ttl     = 0
-    default_ttl = 300
-    max_ttl     = 86400
-  }
-
-  restrictions {
-    geo_restriction {
-      restriction_type = "none"
-    }
-  }
-
-  viewer_certificate {
-    acm_certificate_arn      = aws_acm_certificate_validation.default.certificate_arn
-    ssl_support_method       = "sni-only"
-    minimum_protocol_version = "TLSv1.2_2021"
-  }
 }
 
 #######################
@@ -251,8 +112,8 @@ resource "aws_s3_bucket_ownership_controls" "email" {
 
 resource "aws_s3_bucket_acl" "email" {
   depends_on = [aws_s3_bucket_ownership_controls.email]
-  bucket     = aws_s3_bucket.email.id
-  acl        = "private"
+  bucket = aws_s3_bucket.email.id
+  acl    = "private"
 }
 
 resource "aws_s3_bucket_policy" "email" {
@@ -278,7 +139,7 @@ data "aws_iam_policy_document" "s3_bucket" {
     condition {
       test     = "StringEquals"
       variable = "aws:Referer"
-      values   = [data.aws_caller_identity.current.account_id]
+      values = [data.aws_caller_identity.current.account_id]
     }
   }
 }
@@ -313,7 +174,7 @@ data "aws_iam_policy_document" "lambda_logs" {
       "logs:PutLogEvents",
     ]
 
-    resources = ["arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/${aws_lambda_function.email.function_name}:*", ]
+    resources = ["arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/${aws_lambda_function.email.function_name}:*",]
   }
 }
 
@@ -336,7 +197,7 @@ data "aws_iam_policy_document" "s3_get_object" {
       "s3:GetObject",
     ]
 
-    resources = ["${aws_s3_bucket.email.arn}/emails/*", ]
+    resources = ["${aws_s3_bucket.email.arn}/emails/*",]
   }
 }
 
@@ -361,7 +222,7 @@ data "aws_iam_policy_document" "send_raw_email" {
 
     resources = [
       "arn:aws:ses:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:identity/*",
-    ]
+      ]
   }
 }
 
@@ -387,11 +248,11 @@ resource "aws_lambda_function" "email" {
   runtime          = "python3.12"
   environment {
     variables = {
-      S3_BUCKET_NAME   = aws_s3_bucket.email.bucket
-      S3_BUCKET_PREFIX = "emails"
-      FORWARD_TO_EMAIL = aws_ses_email_identity.email.email
-      REGION           = data.aws_region.current.name
-      LOG_LEVEL        = local.log_level
+      S3_BUCKET_NAME      = aws_s3_bucket.email.bucket
+      S3_BUCKET_PREFIX    = "emails"
+      FORWARD_TO_EMAIL    = aws_ses_email_identity.email.email
+      REGION              = data.aws_region.current.name
+      LOG_LEVEL           = local.log_level
     }
   }
 }

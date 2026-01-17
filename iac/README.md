@@ -16,30 +16,30 @@ This directory contains Terraform configurations for deploying AWS infrastructur
     │  Hosted Zones  │          │ (Email Receipt) │
     └────────┬───────┘          └────────┬────────┘
              │                           │
-             │ A Record (Alias)          │ 1. Store Email
+             │ A/CNAME Records           │ 1. Store Email
              ▼                           ▼
     ┌────────────────┐          ┌─────────────────┐
-    │   CloudFront   │          │   S3 Bucket     │
-    │  Distribution  │          │ (Email Storage) │
-    └────────┬───────┘          └────────┬────────┘
-             │                           │
-         ┌───┴────┐                      │ 2. Trigger Lambda
-         │        │                      ▼
-         ▼        ▼             ┌─────────────────────┐
-    ┌─────┐  ┌────────┐        │  Lambda Function    │
-    │ /   │  │/resume/│        │ (Email Forwarder)   │
-    │     │  │    *   │        └─────────┬───────────┘
-    └──┬──┘  └───┬────┘                  │
-       │         │                       │ 3. Forward Email
-       ▼         ▼                       ▼
-    ┌────────────────────┐     ┌─────────────────────┐
-    │  Vercel (Main)     │     │   Amazon SES        │
-    │  Website Hosting   │     │ (Send Raw Email)    │
-    └────────────────────┘     └─────────┬───────────┘
-    ┌────────────────────┐              │
-    │  Vercel (Resume)   │              │ 4. Deliver
-    │  Website Hosting   │              ▼
-    └────────────────────┘     ┌─────────────────────┐
+    │     Vercel     │          │   S3 Bucket     │
+    │ (Website Host) │          │ (Email Storage) │
+    └────────────────┘          └────────┬────────┘
+                                         │
+                                         │ 2. Trigger Lambda
+                                         ▼
+                                ┌─────────────────────┐
+                                │  Lambda Function    │
+                                │ (Email Forwarder)   │
+                                └─────────┬───────────┘
+                                         │
+                                         │ 3. Forward Email
+                                         ▼
+                                ┌─────────────────────┐
+                                │   Amazon SES        │
+                                │ (Send Raw Email)    │
+                                └─────────┬───────────┘
+                                         │
+                                         │ 4. Deliver
+                                         ▼
+                                ┌─────────────────────┐
                                 │  Personal Gmail     │
                                 │ (Final Destination) │
                                 └─────────────────────┘
@@ -58,38 +58,12 @@ This directory contains Terraform configurations for deploying AWS infrastructur
 **Resources:**
 - `aws_route53_zone.default` - Hosted zone for brignano.io
 - `aws_route53_zone.backup` - Hosted zone for anthonybrignano.com
-- DNS A record pointing to CloudFront distribution (alias)
-- Subdomain records: www (alias to root), resume (CNAME to Vercel for backward compatibility)
-- Certificate validation records for ACM
+- DNS A and CNAME records pointing to Vercel hosting
+- Subdomain records: www (alias), resume (CNAME to Vercel)
 
 **Purpose:** Manages domain name resolution for both primary and backup domains, including subdomain routing.
 
-### 2. Content Delivery (CloudFront)
-
-**Resources:**
-- `aws_cloudfront_distribution.default` - CDN distribution with path-based routing
-- `aws_acm_certificate.default` - SSL/TLS certificate for brignano.io and www subdomain
-- `aws_acm_certificate_validation.default` - Automated certificate validation via DNS
-
-**Origins:**
-- **Main origin** (`main-origin`): Points to primary Vercel deployment (7db213ad1eff704d.vercel-dns-017.com)
-- **Resume origin** (`resume-origin`): Points to resume Vercel deployment (61434b17a818facc.vercel-dns-017.com)
-
-**Cache Behaviors:**
-- **Default behavior**: All paths (`/*`) → main origin
-- **Ordered behavior**: Resume paths (`/resume/*`) → resume origin
-
-**Configuration:**
-- HTTPS redirect enabled (redirect-to-https)
-- Compression enabled (gzip)
-- Zero TTL caching (pass-through mode to respect Vercel's caching)
-- IPv6 enabled
-- Forwards Host, Origin, and Referer headers to origins
-- Forwards all cookies and query strings
-
-**Purpose:** Provides same-origin navigation between main site and resume site, enabling users to navigate from brignano.io to /resume/* without changing origins (avoids GA linker decorations).
-
-### 3. Email Service (SES)
+### 2. Email Service (SES)
 
 **Resources:**
 - `aws_ses_domain_identity.primary` - Domain identity verification for brignano.io
@@ -101,7 +75,7 @@ This directory contains Terraform configurations for deploying AWS infrastructur
 
 **Purpose:** Receives emails at hi@brignano.io and processes them through receipt rules.
 
-### 4. Email Forwarding (Lambda)
+### 3. Email Forwarding (Lambda)
 
 **Resources:**
 - `aws_lambda_function.email` - Python 3.12 function that forwards emails
@@ -126,7 +100,7 @@ This directory contains Terraform configurations for deploying AWS infrastructur
 3. Lambda parses the email content and metadata
 4. Lambda reformats and sends email via SES to personal Gmail
 
-### 5. Storage (S3)
+### 4. Storage (S3)
 
 **Resources:**
 - `aws_s3_bucket.email` - Stores incoming emails before forwarding
@@ -134,7 +108,7 @@ This directory contains Terraform configurations for deploying AWS infrastructur
 
 **Purpose:** Provides durable storage for all incoming emails and enables Lambda to retrieve them.
 
-### 6. Identity and Access Management (IAM)
+### 5. Identity and Access Management (IAM)
 
 **Resources:**
 - `aws_iam_role.email` - Lambda execution role (LambdaAssumeRole)
@@ -145,7 +119,7 @@ This directory contains Terraform configurations for deploying AWS infrastructur
 **Principle of Least Privilege:**
 Each IAM policy grants only the minimum permissions required for the Lambda function to operate.
 
-### 7. Monitoring (CloudWatch)
+### 6. Monitoring (CloudWatch)
 
 **Resources:**
 - `aws_cloudwatch_log_group.email_logs` - Stores Lambda execution logs
@@ -177,16 +151,15 @@ Update these values in `locals.tf` if you're forking this repo:
 
 ```hcl
 locals {
-  region = "us-east-1"
+  region            = "us-east-1"
   domain_name = {
     default = "brignano.io"          # Primary domain
     backup  = "anthonybrignano.com"  # Secondary domain
   }
-  email_address              = "anthonybrignano@gmail.com"  # Forwarding destination
-  log_level                  = "INFO"                         # Lambda log level
-  vercel_ip_address          = "216.198.79.1"                # Vercel A record IP (legacy)
-  vercel_cname_record        = "7db213ad1eff704d.vercel-dns-017.com"  # Main Vercel CNAME
-  vercel_cname_record_resume = "61434b17a818facc.vercel-dns-017.com"  # Resume Vercel CNAME
+  email_address       = "anthonybrignano@gmail.com"  # Forwarding destination
+  log_level          = "INFO"                         # Lambda log level
+  vercel_ip_address  = "216.198.79.1"                # Vercel A record IP
+  vercel_cname_record = "7db213ad1eff704d.vercel-dns-017.com"  # Vercel CNAME
 }
 ```
 
@@ -238,16 +211,13 @@ Changes to `iac/**` files automatically trigger:
 After deployment, Terraform provides these outputs:
 
 ```hcl
-output "aws_region"                        # Current AWS region
-output "aws_account_id"                    # AWS account ID
-output "email_forwarding_lambda_arn"       # Lambda function ARN
-output "primary_website"                   # https://brignano.io
-output "primary_hosted_zone_id"            # Route 53 zone ID
-output "backup_website"                    # https://anthonybrignano.com
-output "backup_hosted_zone_id"             # Route 53 backup zone ID
-output "cloudfront_distribution_id"        # CloudFront distribution ID
-output "cloudfront_distribution_domain_name" # CloudFront domain name
-output "acm_certificate_arn"               # ACM certificate ARN
+output "aws_region"                    # Current AWS region
+output "aws_account_id"                # AWS account ID
+output "email_forwarding_lambda_arn"   # Lambda function ARN
+output "primary_website"               # https://brignano.io
+output "primary_hosted_zone_id"        # Route 53 zone ID
+output "backup_website"                # https://anthonybrignano.com
+output "backup_hosted_zone_id"         # Route 53 backup zone ID
 ```
 
 ## Costs
@@ -258,14 +228,12 @@ Estimated monthly costs (as of 2024):
 |---------|-------|------|
 | Route 53 | 2 hosted zones | $1.00 |
 | Route 53 | ~1M queries/month | $0.40 |
-| CloudFront | ~10GB data transfer, ~100k requests | $1.00 |
-| ACM Certificate | 1 certificate | Free |
 | SES | Receiving emails | Free (first 1,000) |
 | SES | Sending emails | $0.10 per 1,000 emails |
 | Lambda | ~100 invocations/month | Free (first 1M) |
 | S3 | ~1 GB storage | $0.023 |
 | CloudWatch | Logs | $0.50 |
-| **Total** | | **~$3.02/month** |
+| **Total** | | **~$2.03/month** |
 
 *Costs may vary based on actual usage. This is a low-traffic personal website setup.*
 
