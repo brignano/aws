@@ -29,6 +29,14 @@ resource "aws_route53_record" "default_www" {
   }
 }
 
+resource "aws_route53_record" "resume" {
+  zone_id = aws_route53_zone.default.zone_id
+  name    = "resume.${aws_route53_zone.default.name}"
+  type    = "CNAME"
+  ttl     = 300
+  records = [local.vercel_cname_record_resume]
+}
+
 #######################
 # anthonybrignano.com #
 #######################
