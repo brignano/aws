@@ -34,7 +34,7 @@ resource "aws_route53_record" "resume" {
   name    = "resume.${aws_route53_zone.default.name}"
   type    = "CNAME"
   ttl     = 300
-  records = ["61434b17a818facc.vercel-dns-017.com"]
+  records = [local.vercel_cname_record_resume]
 }
 
 #######################
