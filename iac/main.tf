@@ -82,7 +82,7 @@ resource "aws_cloudfront_distribution" "default" {
   enabled         = true
   is_ipv6_enabled = true
   comment         = "brignano.io distribution"
-  # Empty string allows origin to handle root path routing
+  # Empty string allows Vercel to handle routing (SPAs, dynamic routes, etc.)
   default_root_object = ""
   aliases             = [local.domain_name.default, "www.${local.domain_name.default}"]
 
@@ -128,10 +128,11 @@ resource "aws_cloudfront_distribution" "default" {
     }
 
     viewer_protocol_policy = "redirect-to-https"
-    min_ttl                = 0
-    default_ttl            = 0
-    max_ttl                = 0
-    compress               = true
+    # Zero TTL to pass through to Vercel's caching (CloudFront acts as proxy)
+    min_ttl     = 0
+    default_ttl = 0
+    max_ttl     = 0
+    compress    = true
   }
 
   # Cache behavior for /resume/* - resume origin
@@ -151,10 +152,11 @@ resource "aws_cloudfront_distribution" "default" {
     }
 
     viewer_protocol_policy = "redirect-to-https"
-    min_ttl                = 0
-    default_ttl            = 0
-    max_ttl                = 0
-    compress               = true
+    # Zero TTL to pass through to Vercel's caching (CloudFront acts as proxy)
+    min_ttl     = 0
+    default_ttl = 0
+    max_ttl     = 0
+    compress    = true
   }
 
   restrictions {
