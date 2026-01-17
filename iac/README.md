@@ -59,9 +59,8 @@ This directory contains Terraform configurations for deploying AWS infrastructur
 - `aws_route53_zone.default` - Hosted zone for brignano.io
 - `aws_route53_zone.backup` - Hosted zone for anthonybrignano.com
 - DNS A and CNAME records pointing to Vercel hosting
-- Subdomain records: www (alias), resume (CNAME to Vercel)
 
-**Purpose:** Manages domain name resolution for both primary and backup domains, including subdomain routing.
+**Purpose:** Manages domain name resolution for both primary and backup domains.
 
 ### 2. Email Service (SES)
 
