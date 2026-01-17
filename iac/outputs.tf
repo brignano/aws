@@ -32,3 +32,18 @@ output "backup_hosted_zone_id" {
   value       = aws_route53_zone.backup.zone_id
   description = "The backup hosted zone ID."
 }
+
+output "cloudfront_distribution_id" {
+  value       = aws_cloudfront_distribution.default.id
+  description = "The CloudFront distribution ID."
+}
+
+output "cloudfront_distribution_domain_name" {
+  value       = aws_cloudfront_distribution.default.domain_name
+  description = "The CloudFront distribution domain name."
+}
+
+output "acm_certificate_arn" {
+  value       = aws_acm_certificate.default.arn
+  description = "The ARN of the ACM certificate for brignano.io."
+}

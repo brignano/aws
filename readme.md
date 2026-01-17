@@ -16,12 +16,16 @@ This repository contains Infrastructure as Code (IaC) for deploying and managing
 ## Architecture
 
 ```
-Internet → Route 53 → Vercel (Website)
+Internet → Route 53 → CloudFront → Vercel (Website)
+                    ├─ / → Main Vercel deployment
+                    └─ /resume/* → Resume Vercel deployment
           └→ SES → S3 → Lambda → SES → Gmail (Email Forwarding)
 ```
 
 **What's Provisioned:**
 - **Route 53 DNS** - Manages brignano.io and anthonybrignano.com domains
+- **CloudFront CDN** - Distribution with path-based routing for resume site
+- **ACM Certificate** - SSL/TLS certificate for HTTPS on brignano.io
 - **Amazon SES** - Receives emails at hi@brignano.io and forwards them
 - **AWS Lambda** - Python function that processes and forwards emails
 - **S3 Storage** - Archives all incoming emails
@@ -58,12 +62,16 @@ Internet → Route 53 → Vercel (Website)
 ## Features
 
 ### 1. Domain Management
-- **Primary Domain:** brignano.io → Points to Vercel hosting
+- **Primary Domain:** brignano.io → Points to CloudFront distribution
+- **CloudFront CDN:** 
+  - Default path (/) → Main Vercel deployment
+  - /resume/* → Resume Vercel deployment (same-origin navigation)
 - **Backup Domain:** anthonybrignano.com → Also points to Vercel
 - **DNS Provider:** AWS Route 53 for reliable DNS resolution
+- **SSL/TLS:** ACM certificate for HTTPS on brignano.io
 - **Subdomains:**
-  - www.brignano.io → Alias to brignano.io
-  - resume.brignano.io → Points to Vercel hosting (separate deployment)
+  - www.brignano.io → Alias to brignano.io (via CloudFront)
+  - resume.brignano.io → Points to Vercel hosting (separate deployment, maintained for backward compatibility)
   - www.anthonybrignano.com → Points to Vercel hosting
 
 ### 2. Email Forwarding
@@ -181,12 +189,14 @@ Estimated monthly costs for running this infrastructure:
 |---------|-------|-------------|
 | Route 53 Hosted Zones | 2 zones | $1.00 |
 | Route 53 Queries | ~1M queries | $0.40 |
+| CloudFront Distribution | ~10GB data transfer, ~100k requests | $1.00 |
+| ACM Certificate | 1 certificate | Free |
 | SES Receiving | First 1,000 emails | Free |
 | SES Sending | ~100 emails | $0.01 |
 | Lambda | ~100 invocations | Free |
 | S3 Storage | ~1 GB | $0.02 |
 | CloudWatch Logs | 1 log group, 30-day retention | $0.50 |
-| **Total** | | **~$1.93/month** |
+| **Total** | | **~$2.93/month** |
 
 *Actual costs may vary. Free tier covers Lambda and most SES usage for low-volume personal use.*
 
