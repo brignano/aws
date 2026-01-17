@@ -45,6 +45,7 @@ resource "aws_route53_record" "resume" {
 # CloudFront #
 ##############
 
+# ACM certificate must be in us-east-1 for CloudFront (provider is configured for us-east-1)
 resource "aws_acm_certificate" "default" {
   domain_name               = local.domain_name.default
   validation_method         = "DNS"
@@ -78,9 +79,10 @@ resource "aws_acm_certificate_validation" "default" {
 }
 
 resource "aws_cloudfront_distribution" "default" {
-  enabled             = true
-  is_ipv6_enabled     = true
-  comment             = "brignano.io distribution"
+  enabled         = true
+  is_ipv6_enabled = true
+  comment         = "brignano.io distribution"
+  # Empty string allows origin to handle root path routing
   default_root_object = ""
   aliases             = [local.domain_name.default, "www.${local.domain_name.default}"]
 
