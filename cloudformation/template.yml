@@ -64,6 +64,11 @@ Resources:
               - "arn:aws:s3:::brignano.io-emails"
           - Effect: "Allow"
             Action:
+              - "ses:GetIdentityVerificationAttributes"
+              - "ses:DescribeReceiptRuleSet"
+            Resource: "*"
+          - Effect: "Allow"
+            Action:
               - "ses:Describe*"
               - "ses:Get*"
               - "ses:Set*"
