@@ -17,6 +17,14 @@ resource "aws_route53_record" "default" {
   records = [local.vercel_ip_address]
 }
 
+resource "aws_route53_record" "google_search_console" {
+  zone_id = aws_route53_zone.default.zone_id
+  name    = aws_route53_zone.default.name
+  type    = "TXT"
+  ttl     = 300
+  records = ["google-site-verification=iuAjGvkyDsbBSwLyidTghmiUG6OLTgOGxghW4M317QM"]
+}
+
 resource "aws_route53_record" "default_www" {
   zone_id = aws_route53_zone.default.zone_id
   name    = "www.${aws_route53_zone.default.name}"
