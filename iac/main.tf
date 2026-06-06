@@ -108,6 +108,22 @@ resource "aws_s3_bucket_acl" "email" {
   acl    = "private"
 }
 
+resource "aws_s3_bucket_versioning" "email" {
+  bucket = aws_s3_bucket.email.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "email" {
+  bucket = aws_s3_bucket.email.id
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
+}
+
 resource "aws_s3_bucket_policy" "email" {
   bucket = aws_s3_bucket.email.id
   policy = data.aws_iam_policy_document.s3_bucket.json
@@ -238,6 +254,11 @@ resource "aws_lambda_function" "email" {
 
   source_code_hash = data.archive_file.email.output_base64sha256
   runtime          = "python3.12"
+
+  dead_letter_config {
+    target_arn = aws_sqs_queue.email_dlq.arn
+  }
+
   environment {
     variables = {
       S3_BUCKET_NAME      = aws_s3_bucket.email.bucket
@@ -309,4 +330,58 @@ resource "aws_lambda_permission" "email" {
   principal      = "ses.amazonaws.com"
   source_account = data.aws_caller_identity.current.account_id
   source_arn     = aws_ses_receipt_rule.forward.arn
+}
+
+######################
+# monitoring / alerts #
+######################
+
+resource "aws_sqs_queue" "email_dlq" {
+  name                      = "email-forwarder-dlq"
+  message_retention_seconds = 1209600 # 14 days
+}
+
+data "aws_iam_policy_document" "sqs_send_message" {
+  statement {
+    effect  = "Allow"
+    actions = ["sqs:SendMessage"]
+    resources = [aws_sqs_queue.email_dlq.arn]
+  }
+}
+
+resource "aws_iam_policy" "sqs_send_message" {
+  name        = "SqsSendMessagePolicy"
+  description = "Allow Lambda to send failed invocations to the DLQ."
+  policy      = data.aws_iam_policy_document.sqs_send_message.json
+}
+
+resource "aws_iam_role_policy_attachment" "sqs_send_message" {
+  role       = aws_iam_role.email.name
+  policy_arn = aws_iam_policy.sqs_send_message.arn
+}
+
+resource "aws_sns_topic" "email_alerts" {
+  name = "email-forwarder-alerts"
+}
+
+resource "aws_sns_topic_subscription" "email_alerts" {
+  topic_arn = aws_sns_topic.email_alerts.arn
+  protocol  = "email"
+  endpoint  = local.email_address
+}
+
+resource "aws_cloudwatch_metric_alarm" "email_dlq_depth" {
+  alarm_name          = "email-forwarder-dlq-depth"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = 1
+  metric_name         = "ApproximateNumberOfMessagesVisible"
+  namespace           = "AWS/SQS"
+  period              = 300
+  statistic           = "Sum"
+  threshold           = 0
+  alarm_description   = "Emails failed to forward and are sitting in the DLQ"
+  alarm_actions       = [aws_sns_topic.email_alerts.arn]
+  dimensions = {
+    QueueName = aws_sqs_queue.email_dlq.name
+  }
 }

@@ -1,5 +1,13 @@
 AWSTemplateFormatVersion: "2010-09-09"
 
+Parameters:
+  BrignanioHostedZoneId:
+    Type: String
+    Description: Route 53 Hosted Zone ID for brignano.io
+  AnthonyBrignanioHostedZoneId:
+    Type: String
+    Description: Route 53 Hosted Zone ID for anthonybrignano.com
+
 Resources:
   TerraformOIDCProvider:
     Type: "AWS::IAM::OIDCProvider"
@@ -44,8 +52,8 @@ Resources:
             Action:
               - "route53:*"
             Resource:
-              - "arn:aws:route53:::hostedzone/Z03854061GJ89FG9XI2HY" # brignano.io
-              - "arn:aws:route53:::hostedzone/Z03941761P902ZZ5Z2ZNA" # anthonybrignano.com
+              - !Sub "arn:aws:route53:::hostedzone/${BrignanioHostedZoneId}"
+              - !Sub "arn:aws:route53:::hostedzone/${AnthonyBrignanioHostedZoneId}"
               - "arn:aws:route53:::change/*"
           - Effect: "Allow"
             Action:
@@ -57,7 +65,22 @@ Resources:
                 "aws:PrincipalArn": !Sub "arn:aws:sts::${AWS::AccountId}:assumed-role/TerraformCloudAssumeRole/*"
           - Effect: "Allow"
             Action:
-              - "s3:*"
+              - "s3:CreateBucket"
+              - "s3:DeleteBucket"
+              - "s3:GetBucketAcl"
+              - "s3:PutBucketAcl"
+              - "s3:GetBucketOwnershipControls"
+              - "s3:PutBucketOwnershipControls"
+              - "s3:GetBucketPolicy"
+              - "s3:PutBucketPolicy"
+              - "s3:DeleteBucketPolicy"
+              - "s3:GetBucketVersioning"
+              - "s3:PutBucketVersioning"
+              - "s3:GetEncryptionConfiguration"
+              - "s3:PutEncryptionConfiguration"
+              - "s3:GetBucketTagging"
+              - "s3:PutBucketTagging"
+              - "s3:ListBucket"
             Resource:
               - "arn:aws:s3:::www.anthonybrignano.com"
               - "arn:aws:s3:::anthonybrignano.com"
@@ -75,15 +98,26 @@ Resources:
             Action:
               - "iam:List*"
               - "iam:Get*"
-              - "iam:Create*"
-              - "iam:Tag*"
-              - "iam:Update*"
-              - "iam:Attach*"
-              - "iam:Detach*"
-              - "iam:Delete*"
+              - "iam:CreateRole"
+              - "iam:TagRole"
+              - "iam:UpdateRole"
+              - "iam:DeleteRole"
+              - "iam:CreatePolicy"
+              - "iam:TagPolicy"
+              - "iam:DeletePolicy"
+              - "iam:AttachRolePolicy"
+              - "iam:DetachRolePolicy"
               - "iam:PassRole"
             Resource:
-              - !Sub "arn:aws:iam::${AWS::AccountId}:user/*"
+              - !Sub "arn:aws:iam::${AWS::AccountId}:role/LambdaAssumeRole"
+              - !Sub "arn:aws:iam::${AWS::AccountId}:policy/Lambda*"
+              - !Sub "arn:aws:iam::${AWS::AccountId}:policy/S3*"
+              - !Sub "arn:aws:iam::${AWS::AccountId}:policy/Ses*"
+          - Effect: "Allow"
+            Action:
+              - "iam:List*"
+              - "iam:Get*"
+            Resource:
               - !Sub "arn:aws:iam::${AWS::AccountId}:role/*"
               - !Sub "arn:aws:iam::${AWS::AccountId}:policy/*"
           - Effect: "Allow"
@@ -99,6 +133,37 @@ Resources:
             Resource:
               - !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:*"
               - !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:role:*"
+          - Effect: "Allow"
+            Action:
+              - "sqs:CreateQueue"
+              - "sqs:DeleteQueue"
+              - "sqs:GetQueueAttributes"
+              - "sqs:SetQueueAttributes"
+              - "sqs:TagQueue"
+              - "sqs:ListQueues"
+              - "sqs:ListQueueTags"
+            Resource:
+              - !Sub "arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:email-forwarder-dlq"
+          - Effect: "Allow"
+            Action:
+              - "cloudwatch:PutMetricAlarm"
+              - "cloudwatch:DeleteAlarms"
+              - "cloudwatch:DescribeAlarms"
+            Resource:
+              - !Sub "arn:aws:cloudwatch:${AWS::Region}:${AWS::AccountId}:alarm:email-forwarder-*"
+          - Effect: "Allow"
+            Action:
+              - "sns:CreateTopic"
+              - "sns:DeleteTopic"
+              - "sns:GetTopicAttributes"
+              - "sns:SetTopicAttributes"
+              - "sns:TagResource"
+              - "sns:ListTagsForResource"
+              - "sns:Subscribe"
+              - "sns:Unsubscribe"
+              - "sns:ListSubscriptionsByTopic"
+            Resource:
+              - !Sub "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:email-forwarder-alerts"
           - Effect: "Allow"
             Action:
               - "logs:CreateLogGroup"

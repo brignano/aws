@@ -17,6 +17,7 @@ env:
 jobs:
   apply:
     runs-on: ubuntu-latest
+    environment: production
     permissions:
       contents: read
     steps:
