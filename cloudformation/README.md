@@ -52,6 +52,8 @@ The stack is automatically deployed via GitHub Actions when changes are pushed t
 
 ### Option 2: Manual Deployment via AWS CLI
 
+The template requires two parameters — look up your hosted zone IDs in the Route 53 console or via `aws route53 list-hosted-zones`.
+
 ```bash
 # Validate the template
 aws cloudformation validate-template \
@@ -62,7 +64,10 @@ aws cloudformation deploy \
   --template-file cloudformation/template.yml \
   --stack-name TerraformAssumeRoleSetup \
   --capabilities CAPABILITY_NAMED_IAM \
-  --region us-east-1
+  --region us-east-1 \
+  --parameter-overrides \
+    BrignanioHostedZoneId=<brignano.io zone id> \
+    AnthonyBrignanioHostedZoneId=<anthonybrignano.com zone id>
 
 # Get the output (Role ARN)
 aws cloudformation describe-stacks \
