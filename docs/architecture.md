@@ -84,14 +84,14 @@ sequenceDiagram
 
     S->>SES: Email to hi@brignano.io (via MX)
     Note over SES: Rules run in order
-    rect rgb(232, 245, 233)
+    rect rgba(63, 185, 80, 0.15)
     SES->>S3: archive → PutObject emails/*
     SES->>L: forward → async invoke
     L->>S3: GetObject raw message
     L->>SES: SendRawEmail
     SES->>G: Deliver forwarded email
     end
-    rect rgb(255, 235, 238)
+    rect rgba(248, 81, 73, 0.15)
     Note over L,DLQ: On failed invocation
     L--xDLQ: lands in DLQ → alarm → SNS → email
     end
