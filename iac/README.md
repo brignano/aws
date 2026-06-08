@@ -277,14 +277,14 @@ Error: creating Route 53 Record: InvalidChangeBatch: [Tried to create resource r
 ```
 
 **Solution:**
-See the detailed import guide at [`../docs/terraform-import.md`](../docs/terraform-import.md) for step-by-step instructions.
+Import the existing resource into Terraform state so the next plan reconciles it instead of trying to recreate it.
 
 **Quick Import Command:**
 ```bash
 terraform import aws_route53_record.backup_www <ZONE_ID>_www.anthonybrignano.com_CNAME
 ```
 
-Replace `<ZONE_ID>` with your actual Route 53 hosted zone ID (e.g., `Z03941761P902ZZ5Z2ZNA`).
+Replace `<ZONE_ID>` with your actual Route 53 hosted zone ID (e.g., `Z03941761P902ZZ5Z2ZNA`). The record import ID format is `ZONE_ID_NAME_TYPE`; see the [aws_route53_record import docs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_record#import) for other record types.
 
 ## Monitoring and Troubleshooting
 

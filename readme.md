@@ -8,26 +8,30 @@ This repository contains Infrastructure as Code (IaC) for deploying and managing
 
 ## Quick Links
 
-- 🗺️ [Architecture](docs/architecture.md) - Diagrams and resource inventory
-- 📖 [Infrastructure Documentation](iac/README.md) - Detailed Terraform configuration guide
+- 🗺️ [Architecture](docs/architecture.md) - Diagrams, resource inventory, and email-flow walkthrough
+- 📐 [Design Decisions](docs/design.md) - Why the infrastructure is built this way, and trade-offs
+- 📖 [Infrastructure Documentation](iac/README.md) - Detailed Terraform configuration and operations guide
 - 🔧 [CloudFormation Setup](cloudformation/README.md) - OIDC authentication configuration
-- 📋 [Design Document](docs/design.md) - Architecture and design decisions
-- 🔄 [Terraform Import Guide](docs/terraform-import.md) - How to import existing AWS resources
 
 ## Architecture
 
 ```
 Internet → Route 53 → Vercel (Website)
           └→ SES → S3 → Lambda → SES → Gmail (Email Forwarding)
+                          └→ SQS DLQ → CloudWatch alarm → SNS (failure alerts)
 ```
 
-**What's Provisioned:**
-- **Route 53 DNS** - Manages brignano.io and anthonybrignano.com domains
-- **Amazon SES** - Receives emails at hi@brignano.io and forwards them
-- **AWS Lambda** - Python function that processes and forwards emails
-- **S3 Storage** - Archives all incoming emails
-- **IAM Roles** - Secure permissions for Lambda execution
-- **CloudWatch** - Logs and monitoring
+> 🗺️ See [docs/architecture.md](docs/architecture.md) for the full styled diagrams,
+> the email-forwarding sequence, and a resource-by-resource inventory.
+
+**What's Provisioned (all in `us-east-1`):**
+- **Route 53 DNS** - Hosted zones for brignano.io and anthonybrignano.com, plus SES verification and Google Search Console records
+- **Amazon SES** - Receives email at hi@brignano.io (rule set: bounce, archive, forward) and sends the forwarded copy
+- **AWS Lambda** - `email-forwarder` (Python 3.12) that reads from S3 and re-sends via SES
+- **S3 Storage** - Encrypted (AES256), versioned bucket archiving every incoming email
+- **IAM Roles** - Least-privilege `LambdaAssumeRole` with scoped policies
+- **Monitoring & alerting** - SQS dead-letter queue, CloudWatch alarm on DLQ depth, and an SNS email alert on forwarding failures
+- **CloudWatch Logs** - 30-day retention for Lambda execution
 
 ## Repository Structure
 
@@ -47,8 +51,8 @@ Internet → Route 53 → Vercel (Website)
 │   ├── template.yml             # OIDC provider setup for Terraform Cloud
 │   └── README.md                # CloudFormation setup guide
 ├── docs/                        # Additional documentation
-│   ├── design.md                # Architecture design decisions
-│   └── terraform-import.md      # Import existing resources guide
+│   ├── architecture.md          # Diagrams and resource inventory
+│   └── design.md                # Design decisions and trade-offs
 ├── .github/workflows/           # CI/CD pipelines
 │   ├── plan.yml                 # Terraform plan on PRs
 │   ├── apply.yml                # Terraform apply on main branch
@@ -67,8 +71,9 @@ Internet → Route 53 → Vercel (Website)
 ### 2. Email Forwarding
 - **Receive Email:** hi@brignano.io
 - **Forward To:** Personal Gmail account (configured in `locals.tf`)
-- **Storage:** All emails archived in S3 bucket
+- **Storage:** All emails archived in an encrypted, versioned S3 bucket
 - **No-Reply Handling:** Emails to noreply@brignano.io are automatically bounced
+- **Failure Alerting:** Failed forwards land in an SQS DLQ and trigger a CloudWatch alarm → SNS email alert
 
 ### 3. Infrastructure as Code
 - **Terraform** manages all AWS resources
@@ -194,7 +199,7 @@ Estimated monthly costs for running this infrastructure:
 
 **Issue:** `Error: creating Route 53 Record: InvalidChangeBatch: resource already exists`
 - **Solution:** Import the existing resource into Terraform state
-- **Guide:** See [docs/terraform-import.md](docs/terraform-import.md)
+- **Guide:** See [Terraform State Management](iac/README.md#terraform-state-management) in the IaC docs
 
 **Issue:** Email not being forwarded
 - **Check:** SES email verification status
@@ -366,4 +371,4 @@ brew install terraform  # macOS
 ---
 
 **Maintained by:** Anthony Brignano  
-**Last Updated:** 2026-01-08
+**Last Updated:** 2026-06-08
