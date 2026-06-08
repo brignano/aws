@@ -112,8 +112,8 @@ resource "aws_s3_bucket_ownership_controls" "email" {
 
 resource "aws_s3_bucket_acl" "email" {
   depends_on = [aws_s3_bucket_ownership_controls.email]
-  bucket = aws_s3_bucket.email.id
-  acl    = "private"
+  bucket     = aws_s3_bucket.email.id
+  acl        = "private"
 }
 
 resource "aws_s3_bucket_versioning" "email" {
@@ -155,7 +155,7 @@ data "aws_iam_policy_document" "s3_bucket" {
     condition {
       test     = "StringEquals"
       variable = "aws:Referer"
-      values = [data.aws_caller_identity.current.account_id]
+      values   = [data.aws_caller_identity.current.account_id]
     }
   }
 }
@@ -190,7 +190,7 @@ data "aws_iam_policy_document" "lambda_logs" {
       "logs:PutLogEvents",
     ]
 
-    resources = ["arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/${aws_lambda_function.email.function_name}:*",]
+    resources = ["arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/aws/lambda/${aws_lambda_function.email.function_name}:*", ]
   }
 }
 
@@ -213,7 +213,7 @@ data "aws_iam_policy_document" "s3_get_object" {
       "s3:GetObject",
     ]
 
-    resources = ["${aws_s3_bucket.email.arn}/emails/*",]
+    resources = ["${aws_s3_bucket.email.arn}/emails/*", ]
   }
 }
 
@@ -238,7 +238,7 @@ data "aws_iam_policy_document" "send_raw_email" {
 
     resources = [
       "arn:aws:ses:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:identity/*",
-      ]
+    ]
   }
 }
 
@@ -263,17 +263,21 @@ resource "aws_lambda_function" "email" {
   source_code_hash = data.archive_file.email.output_base64sha256
   runtime          = "python3.12"
 
+  # Lambda validates that the execution role can SendMessage to the DLQ target
+  # at update time, so the SQS policy must be attached to the role first.
+  depends_on = [aws_iam_role_policy_attachment.sqs_send_message]
+
   dead_letter_config {
     target_arn = aws_sqs_queue.email_dlq.arn
   }
 
   environment {
     variables = {
-      S3_BUCKET_NAME      = aws_s3_bucket.email.bucket
-      S3_BUCKET_PREFIX    = "emails"
-      FORWARD_TO_EMAIL    = aws_ses_email_identity.email.email
-      REGION              = data.aws_region.current.name
-      LOG_LEVEL           = local.log_level
+      S3_BUCKET_NAME   = aws_s3_bucket.email.bucket
+      S3_BUCKET_PREFIX = "emails"
+      FORWARD_TO_EMAIL = aws_ses_email_identity.email.email
+      REGION           = data.aws_region.current.name
+      LOG_LEVEL        = local.log_level
     }
   }
 }
@@ -351,8 +355,8 @@ resource "aws_sqs_queue" "email_dlq" {
 
 data "aws_iam_policy_document" "sqs_send_message" {
   statement {
-    effect  = "Allow"
-    actions = ["sqs:SendMessage"]
+    effect    = "Allow"
+    actions   = ["sqs:SendMessage"]
     resources = [aws_sqs_queue.email_dlq.arn]
   }
 }
