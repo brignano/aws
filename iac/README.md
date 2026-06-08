@@ -334,14 +334,14 @@ Check CloudWatch logs within 1-2 minutes for processing status.
 3. **Email Verification:** Prevents unauthorized email forwarding
 4. **CloudWatch Logging:** Audit trail for all email operations
 5. **Private S3 Bucket:** Email storage is not publicly accessible
+6. **S3 Encryption at Rest:** AES256 server-side encryption enabled
+7. **S3 Versioning:** Protects against accidental deletion/overwrite
+8. **Failure Alerting:** DLQ + CloudWatch alarm + SNS notify on forwarding failures
 
 ### Security Best Practices
 
-1. **Enable S3 Encryption:** Consider enabling S3 bucket encryption at rest
-2. **Enable S3 Versioning:** Protect against accidental deletion
-3. **Review SES Sending Limits:** Monitor bounce and complaint rates
-4. **Rotate Credentials:** Use OIDC instead of long-term AWS credentials
-5. **Monitor CloudWatch Alarms:** Set up alerts for Lambda errors
+1. **Review SES Sending Limits:** Monitor bounce and complaint rates
+2. **Rotate Credentials:** Use OIDC instead of long-term AWS credentials
 
 ## Known Limitations
 
@@ -357,8 +357,6 @@ Check CloudWatch logs within 1-2 minutes for processing status.
 - [ ] Support HTML email content
 - [ ] Add attachment handling
 - [ ] Implement email filtering rules
-- [ ] Add CloudWatch alarms for failures
-- [ ] Enable S3 bucket encryption
 - [ ] Add SPF/DKIM/DMARC configuration documentation
 
 ## References
