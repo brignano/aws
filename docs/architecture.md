@@ -14,7 +14,7 @@ graph TD
     subgraph internet["Internet"]
         Visitor([Web visitor])
         Sender([Inbound sender])
-        Gmail([anthonybrignano@gmail.com])
+        Gmail(["anthonybrignano@gmail.com"])
     end
 
     subgraph route53["Route 53"]
