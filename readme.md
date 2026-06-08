@@ -8,6 +8,7 @@ This repository contains Infrastructure as Code (IaC) for deploying and managing
 
 ## Quick Links
 
+- 🗺️ [Architecture](docs/architecture.md) - Diagrams and resource inventory
 - 📖 [Infrastructure Documentation](iac/README.md) - Detailed Terraform configuration guide
 - 🔧 [CloudFormation Setup](cloudformation/README.md) - OIDC authentication configuration
 - 📋 [Design Document](docs/design.md) - Architecture and design decisions
@@ -258,9 +259,11 @@ Developer → Git Push → GitHub → Terraform Cloud → AWS
 1. ✅ **IAM Least Privilege** - Each component has minimal permissions
 2. ✅ **OIDC Authentication** - No long-term AWS credentials stored
 3. ✅ **Private S3 Bucket** - Email storage not publicly accessible
-4. ✅ **SES Verification** - Prevents unauthorized email forwarding
-5. ✅ **CloudWatch Logging** - Audit trail for all operations
-6. ✅ **Terraform Cloud** - State files encrypted and secured
+4. ✅ **S3 Encryption & Versioning** - AES256 at rest, versioning enabled
+5. ✅ **SES Verification** - Prevents unauthorized email forwarding
+6. ✅ **CloudWatch Logging** - Audit trail for all operations
+7. ✅ **Failure Alerting** - DLQ + CloudWatch alarm + SNS on forwarding failures
+8. ✅ **Terraform Cloud** - State files encrypted and secured
 
 ### Security Best Practices
 
@@ -269,8 +272,6 @@ Developer → Git Push → GitHub → Terraform Cloud → AWS
 - 🔒 Monitor CloudWatch logs for suspicious activity
 - 🔒 Keep Terraform providers up to date
 - 🔒 Review SES bounce and complaint rates
-- 🔒 Consider enabling S3 bucket versioning
-- 🔒 Consider enabling S3 server-side encryption
 
 ## Known Limitations
 
@@ -286,8 +287,6 @@ Developer → Git Push → GitHub → Terraform Cloud → AWS
 - [ ] Preserve Reply-To, CC, BCC headers
 - [ ] Handle email attachments properly
 - [ ] Add email filtering/spam detection
-- [ ] CloudWatch alarms for Lambda failures
-- [ ] S3 bucket encryption at rest
 - [ ] SPF/DKIM/DMARC documentation
 - [ ] Automated testing for Lambda function
 - [ ] Cost monitoring and alerts
