@@ -123,6 +123,7 @@ Resources:
               - !Sub "arn:aws:iam::${AWS::AccountId}:policy/Lambda*"
               - !Sub "arn:aws:iam::${AWS::AccountId}:policy/S3*"
               - !Sub "arn:aws:iam::${AWS::AccountId}:policy/Ses*"
+              - !Sub "arn:aws:iam::${AWS::AccountId}:policy/Sqs*"
           - Effect: "Allow"
             Action:
               - "iam:List*"
@@ -159,6 +160,7 @@ Resources:
               - "cloudwatch:PutMetricAlarm"
               - "cloudwatch:DeleteAlarms"
               - "cloudwatch:DescribeAlarms"
+              - "cloudwatch:ListTagsForResource"
             Resource:
               - !Sub "arn:aws:cloudwatch:${AWS::Region}:${AWS::AccountId}:alarm:email-forwarder-*"
           - Effect: "Allow"
@@ -171,6 +173,7 @@ Resources:
               - "sns:ListTagsForResource"
               - "sns:Subscribe"
               - "sns:Unsubscribe"
+              - "sns:GetSubscriptionAttributes"
               - "sns:ListSubscriptionsByTopic"
             Resource:
               - !Sub "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:email-forwarder-alerts"
