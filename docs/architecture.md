@@ -10,81 +10,91 @@ For the *why* behind these choices, see [design.md](design.md).
 ## System diagram
 
 ```mermaid
-graph TD
-    subgraph internet["Internet"]
-        Visitor([Web visitor])
-        Sender([Inbound sender])
-        Gmail(["anthonybrignano@gmail.com"])
+flowchart TB
+    Visitor([Web visitor]):::ext
+    Sender([Inbound email]):::ext
+    Gmail([Gmail inbox]):::ext
+
+    subgraph DNS["Route 53 · DNS"]
+        direction LR
+        ZoneP["brignano.io"]:::dns
+        ZoneB["anthonybrignano.com"]:::dns
     end
 
-    subgraph route53["Route 53"]
-        ZoneP["Zone: brignano.io<br/>(prevent_destroy)"]
-        ZoneB["Zone: anthonybrignano.com<br/>(prevent_destroy)"]
-        ZoneP -. "A apex + www alias<br/>TXT: GSC + SES verify<br/>MX: inbound-smtp" .- RecP[" "]
-        ZoneB -. "A apex + www CNAME" .- RecB[" "]
+    Vercel["Vercel<br/>website host"]:::vercel
+
+    RuleSet{{"SES receipt<br/>rule set"}}:::ses
+    RNoreply["noreply@<br/>bounce 550"]:::ses
+    SESsend["SES<br/>SendRawEmail"]:::ses
+    S3[("S3 archive<br/>brignano.io-emails")]:::s3
+    Lambda["Lambda<br/>email-forwarder"]:::lambda
+
+    subgraph MON["Monitoring & alerting"]
+        direction LR
+        DLQ["SQS DLQ"]:::integ
+        Alarm["CloudWatch<br/>alarm"]:::mon
+        SNS["SNS topic"]:::integ
+        Logs["CloudWatch<br/>Logs"]:::mon
     end
 
-    subgraph vercel["Vercel (external)"]
-        VercelApp["216.198.79.1<br/>*.vercel-dns"]
-    end
-
-    subgraph ses["SES"]
-        SESdomain["Domain identity: brignano.io"]
-        RuleSet["Active rule set: default-rule-set"]
-        RNoreply["rule: noreply@ → bounce 550"]
-        RArchive["rule: hi@ → S3 archive"]
-        RForward["rule: hi@ → Lambda"]
-    end
-
-    subgraph storage["S3"]
-        Bucket["brignano.io-emails<br/>AES256 · versioned · private<br/>prefix: emails/"]
-    end
-
-    subgraph compute["Lambda"]
-        Fn["email-forwarder<br/>python3.12 · 30s<br/>role: LambdaAssumeRole"]
-    end
-
-    subgraph monitoring["Monitoring & alerting"]
-        DLQ["SQS: email-forwarder-dlq<br/>14-day retention"]
-        Alarm["CloudWatch alarm:<br/>dlq-depth &gt; 0"]
-        SNS["SNS: email-forwarder-alerts"]
-        Logs["CloudWatch Logs<br/>30-day retention"]
-    end
-
-    Visitor --> ZoneP --> VercelApp
-    Visitor --> ZoneB --> VercelApp
+    Visitor --> ZoneP --> Vercel
+    Visitor --> ZoneB --> Vercel
 
     Sender -->|MX| RuleSet
     RuleSet --> RNoreply
-    RuleSet --> RArchive --> Bucket
-    RuleSet --> RForward --> Fn
-    Fn -->|GetObject| Bucket
-    Fn -->|SendRawEmail| SESdomain --> Gmail
-    Fn -->|on failure| DLQ
-    Fn --> Logs
-    DLQ --> Alarm --> SNS -->|email| Gmail
+    RuleSet -->|archive| S3
+    RuleSet -->|forward| Lambda
+    Lambda -->|GetObject| S3
+    Lambda --> SESsend --> Gmail
+    Lambda -.->|on failure| DLQ --> Alarm --> SNS -.->|email| Gmail
+    Lambda --> Logs
+
+    classDef ext fill:#37474F,stroke:#1C262B,color:#fff
+    classDef vercel fill:#111111,stroke:#000000,color:#fff
+    classDef dns fill:#8C4FFF,stroke:#5E30A6,color:#fff
+    classDef ses fill:#DD344C,stroke:#A12235,color:#fff
+    classDef s3 fill:#7AA116,stroke:#56750F,color:#fff
+    classDef lambda fill:#ED7100,stroke:#AD5300,color:#fff
+    classDef integ fill:#E7157B,stroke:#A60E59,color:#fff
+    classDef mon fill:#2E73B8,stroke:#1E4D7B,color:#fff
 ```
+
+Colors follow AWS's own service-category palette:
+
+| Color | Service | AWS category |
+|-------|---------|--------------|
+| 🟪 Purple | Route 53 | Networking & Content Delivery |
+| 🟥 Red | SES | Customer Engagement |
+| 🟩 Green | S3 | Storage |
+| 🟧 Orange | Lambda | Compute |
+| 🩷 Magenta | SQS / SNS | Application Integration |
+| 🟦 Blue | CloudWatch | Management & Governance |
 
 ## Email forwarding flow
 
 ```mermaid
 sequenceDiagram
-    participant S as Sender
+    autonumber
+    actor S as Sender
     participant SES as Amazon SES
-    participant S3 as S3 (brignano.io-emails)
-    participant L as Lambda (email-forwarder)
+    participant S3 as S3 archive
+    participant L as Lambda
     participant DLQ as SQS DLQ
-    participant G as Gmail
+    actor G as Gmail
 
     S->>SES: Email to hi@brignano.io (via MX)
-    Note over SES: Active rule set processes rules in order
-    SES->>S3: archive rule — PutObject emails/*
-    SES->>L: forward rule — async invoke (Event)
+    Note over SES: Rules run in order
+    rect rgb(232, 245, 233)
+    SES->>S3: archive → PutObject emails/*
+    SES->>L: forward → async invoke
     L->>S3: GetObject raw message
     L->>SES: SendRawEmail
     SES->>G: Deliver forwarded email
+    end
+    rect rgb(255, 235, 238)
     Note over L,DLQ: On failed invocation
-    L--xDLQ: message lands in DLQ → alarm → SNS → email
+    L--xDLQ: lands in DLQ → alarm → SNS → email
+    end
 ```
 
 > Mail to `noreply@brignano.io` is bounced (SMTP 550 / 5.1.1) before any of the
@@ -134,12 +144,30 @@ IAM role created out-of-band by the CloudFormation stack in
 [`cloudformation/`](../cloudformation) via OIDC. Changes flow:
 
 ```mermaid
-graph LR
-    Dev[Developer] -->|git push| GH[GitHub]
-    GH -->|PR: plan.yml| TFCp[TFC: terraform plan]
-    GH -->|main: apply.yml| TFCa[TFC: terraform apply]
-    GH -->|cloudformation/**: aws-setup.yml| CFN[CloudFormation: OIDC role]
-    TFCa -->|OIDC assume-role| AWS[(AWS account)]
+flowchart LR
+    Dev([Developer]):::ext
+    GH["GitHub Actions"]:::ext
+
+    subgraph TFC["Terraform Cloud · aws-config"]
+        direction TB
+        Plan["plan.yml<br/>terraform plan (PR)"]:::tf
+        Apply["apply.yml<br/>terraform apply (main)"]:::tf
+    end
+
+    CFN["CloudFormation<br/>OIDC role"]:::dns
+    AWS[("AWS account")]:::aws
+
+    Dev -->|git push| GH
+    GH -->|pull request| Plan
+    GH -->|merge to main| Apply
+    GH -->|cloudformation/**| CFN
+    Apply -->|OIDC assume-role| AWS
+    CFN -.->|defines trust| AWS
+
+    classDef ext fill:#37474F,stroke:#1C262B,color:#fff
+    classDef tf fill:#7B42BC,stroke:#54299E,color:#fff
+    classDef dns fill:#8C4FFF,stroke:#5E30A6,color:#fff
+    classDef aws fill:#232F3E,stroke:#000000,color:#fff
 ```
 
 See [`cloudformation/README.md`](../cloudformation/README.md) for the OIDC trust
