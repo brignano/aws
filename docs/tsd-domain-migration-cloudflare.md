@@ -180,11 +180,13 @@ is wanted later, an Email Worker can `forward()` to a second destination.
 
 ### Phase 0 — Pre-flight (day of, ~15 min) · **reversible**
 
-1. **Lock the Terraform Cloud workspace `brignano/aws-config`.**
-   `.github/workflows/apply.yml` runs `terraform apply` with auto-approve on pushes to
-   `main` that touch `iac/**` or the workflow itself. Any such merge mid-migration could
-   destroy live records. Docs-only changes do not trigger it, but the lock removes the
-   whole class of accident for the cost of one click.
+1. **Confirm nothing is queued to merge into `iac/**`.** `.github/workflows/apply.yml` runs
+   `terraform apply` with auto-approve on pushes to `main` touching `iac/**` or the workflow
+   itself. Verified 2026-08-23: no Dependabot config, no open PRs touching `iac/`, and
+   nothing self-merges. An apply of the *unchanged* config is a no-op against Route 53, so
+   this is near-zero risk in practice — locking the TFC workspace is optional belt-and-braces,
+   not a prerequisite. The risk becomes real only at Phase 3, where the mitigation is reading
+   the plan output rather than locking.
 2. Create the Cloudflare account / confirm the Zero Trust team domain name.
 3. Snapshot both zones for rollback reference:
    ```bash
@@ -260,7 +262,9 @@ only safe *because* catch-all is Drop; with catch-all forwarding it would whitel
 
 Do not start until Phase 2 has soaked and email is confirmed healthy.
 
-1. Unlock the TFC workspace.
+1. **This is where auto-apply matters.** Merging this PR triggers `terraform apply` with
+   auto-approve and no further gate. Read the `plan.yml` output on the PR line by line and
+   confirm it destroys only the intended resources before merging.
 2. In `brignano/aws`, remove from `iac/main.tf`: both `aws_route53_zone` blocks (delete the
    `prevent_destroy` lifecycle blocks first, or Terraform refuses), all `aws_route53_record`
    blocks, the SES identity/rule-set/receipt-rule resources, the `email-forwarder` Lambda,
@@ -357,7 +361,7 @@ once the 60-day-lock consideration is irrelevant. Savings are single-digit dolla
 | Risk | Severity | Mitigation |
 |---|---|---|
 | **Silent email loss** during MX cutover | **Highest** — silent and unrecoverable | MX untouched in Phase 1. Phase 2 is isolated and reversible; SES stays live through soak. Test send before and after every phase |
-| TFC auto-apply destroys records mid-migration | Medium — `apply.yml` auto-approves on merges to `main` touching `iac/**` | Lock the `aws-config` workspace in Phase 0; unlock only for Phase 3 |
+| TFC auto-apply changes DNS unexpectedly | Low — needs a merge touching `iac/**`; none queued, no Dependabot, nothing self-merges, and applying the unchanged config is a no-op | Confirm no pending `iac/` PRs before starting. Real exposure is Phase 3: read the plan output on the PR before merging |
 | `www.brignano.io` ALIAS dropped on import | Medium — silent 1-hostname outage | Explicitly hand-created as an A record; verified by `dig` in Phase 1 step 3 |
 | Site goes dark on NS flip | Low — no DNSSEC | Route 53 zone stays live for full 48h overlap; pre-flip verification against CF nameservers |
 | Vercel cert issuance breaks | Low | All Vercel records **DNS only**, never proxied |
