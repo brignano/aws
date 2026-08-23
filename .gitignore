@@ -9,3 +9,4 @@ iac/work/
 __pycache__/
 *.py[cod]
 *$py.class
+.migration-snapshot/
