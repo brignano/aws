@@ -115,6 +115,11 @@ Resources:
               - "iam:CreatePolicy"
               - "iam:TagPolicy"
               - "iam:DeletePolicy"
+              # Deleting a managed policy requires deleting its non-default
+              # versions first. Without this, `terraform destroy` fails with
+              # AccessDenied on iam:DeletePolicyVersion for any policy that has
+              # ever been updated in place.
+              - "iam:DeletePolicyVersion"
               - "iam:AttachRolePolicy"
               - "iam:DetachRolePolicy"
               - "iam:PassRole"
