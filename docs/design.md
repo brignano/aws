@@ -1,5 +1,11 @@
 # Design decisions
 
+> **Historical — superseded 2026-08-23.** The infrastructure whose trade-offs are
+> discussed below was decommissioned when DNS moved to Cloudflare and inbound mail
+> moved to Cloudflare Email Routing. This document is retained for the reasoning,
+> not as a description of anything currently deployed. See
+> [tsd-domain-migration-cloudflare.md](tsd-domain-migration-cloudflare.md).
+
 The *why* behind this infrastructure. For the resource-level picture see
 [architecture.md](architecture.md); for deploy/operations see
 [`iac/README.md`](../iac/README.md).
